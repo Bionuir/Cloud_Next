@@ -25,7 +25,7 @@ export default function Login() {
     try {
       await loginSchema.validate(formData, { abortEarly: false });
       await signInWithEmailAndPassword(auth, email, password);
-      router.push('/dashboard');
+      router.push('/main');
     } catch (err) {
       if (err.name === 'ValidationError') {
         setError(err.errors[0]);
@@ -57,7 +57,7 @@ export default function Login() {
       })
     });
 
-    router.push('/dashboard');
+    router.push('/main');
   } catch (err) {
     if (err.code === 'auth/popup-closed-by-user') {
       console.log('Popup cerrado por el usuario.');

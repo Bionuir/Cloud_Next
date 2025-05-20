@@ -7,16 +7,26 @@ import * as yup from 'yup';
 
 const registerSchema = yup.object().shape({
   nombre: yup.string().trim().required('El nombre es obligatorio'),
-  apellido: yup.string().trim(),
+  apellido: yup.string().trim().required('El apellido es obligatorio'),
   email: yup.string().email('Correo inválido').required('El correo es obligatorio'),
-  password: yup.string().min(6, 'Mínimo 6 caracteres').required('La contraseña es obligatoria'),
-  direccion: yup.string().trim(),
-  sexo: yup.string().oneOf(['masculino', 'femenino', 'otro', ''], 'Valor inválido'),
+  password: yup
+    .string()
+    .transform(value => value === "" ? undefined : value)
+    .min(6, 'Mínimo 6 caracteres')
+    .notRequired(),
+  direccion: yup
+    .string()
+    .trim()
+    .transform(value => value === "" ? undefined : value)
+    .notRequired(),
+  sexo: yup.string().oneOf(['masculino', 'femenino', 'otro', ''], 'Valor inválido').notRequired(),
   telefono: yup
     .string()
+    .transform(value => value === "" ? undefined : value)
     .matches(/^[0-9\-+()\s]*$/, 'Teléfono inválido')
-    .min(9, 'Mínimo 9 caracteres')
-    .max(9, 'Máximo 9 caracteres'),
+    .min(9, 'El telefono debe tener al menos 9 caracteres')
+    .max(9, 'El telefono no puede tener más de 9 caracteres')
+    .notRequired(),
 });
 
 export default function Register() {
@@ -51,7 +61,7 @@ export default function Register() {
         body: JSON.stringify({ nombre, apellido, direccion, sexo, telefono })
       });
 
-      router.push('/dashboard');
+      router.push('/main');
     } catch (err) {
       if (err.name === 'ValidationError') {
         setError(err.errors[0]); // Muestra solo el primer error
@@ -85,7 +95,7 @@ export default function Register() {
         })
       });
 
-      router.push('/dashboard');
+      router.push('/main');
     } catch (err) {
     if (err.code === 'auth/popup-closed-by-user') {
       console.log('Popup cerrado por el usuario.');
@@ -118,7 +128,7 @@ export default function Register() {
             />
           </div>
           <div className="w-1/2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Apellido</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Apellido *</label>
             <input
               type="text"
               value={apellido}
