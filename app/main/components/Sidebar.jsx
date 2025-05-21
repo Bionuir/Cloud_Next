@@ -47,24 +47,21 @@ export default function Sidebar({ vistaActiva, setVistaActiva, user }) {
           <li>
             <button onClick={() => setVistaActiva('tiposterapeuta')} className={`w-full text-left px-3 py-2 rounded-lg transition ${vistaActiva === 'tiposterapeuta' ? 'bg-blue-100 text-blue-700 font-semibold' : 'hover:bg-gray-200'}`}>🏠 Tipos de Terapeuta</button>
           </li>
-          
-            <li>
-              <button onClick={() => setVistaActiva('terapeutas')} className={`w-full text-left px-3 py-2 rounded-lg transition ${vistaActiva === 'terapeutas' ? 'bg-blue-100 text-blue-700 font-semibold' : 'hover:bg-gray-200'}`}>👩‍⚕️ Terapeutas</button>
-            </li>
-          
+
+          <li>
+            <button onClick={() => setVistaActiva('terapeutas')} className={`w-full text-left px-3 py-2 rounded-lg transition ${vistaActiva === 'terapeutas' ? 'bg-blue-100 text-blue-700 font-semibold' : 'hover:bg-gray-200'}`}>👩‍⚕️ Terapeutas</button>
+          </li>
+
           {isAdmin && (
             <li>
               <button onClick={() => setVistaActiva('usuarios')} className={`w-full text-left px-3 py-2 rounded-lg transition ${vistaActiva === 'usuarios' ? 'bg-blue-100 text-blue-700 font-semibold' : 'hover:bg-gray-200'}`}>🧑‍💼 Usuarios</button>
             </li>
           )}
+          <li>
+            <button onClick={() => setVistaActiva('sesiones')} className={`w-full text-left px-3 py-2 rounded-lg transition ${vistaActiva === 'sesiones' ? 'bg-blue-100 text-blue-700 font-semibold' : 'hover:bg-gray-200'}`}>🗓️ Sesiones</button>
+          </li>
           {isTerapeuta && (
             <>
-              <li>
-                <button onClick={() => setVistaActiva('sesiones')} className={`w-full text-left px-3 py-2 rounded-lg transition ${vistaActiva === 'sesiones' ? 'bg-blue-100 text-blue-700 font-semibold' : 'hover:bg-gray-200'}`}>🗓️ Sesiones</button>
-              </li>
-              <li>
-                <button onClick={() => setVistaActiva('historial')} className={`w-full text-left px-3 py-2 rounded-lg transition ${vistaActiva === 'historial' ? 'bg-blue-100 text-blue-700 font-semibold' : 'hover:bg-gray-200'}`}>📚 Historial de sesiones</button>
-              </li>
               <li>
                 <button onClick={() => setVistaActiva('horario')} className={`w-full text-left px-3 py-2 rounded-lg transition ${vistaActiva === 'horario' ? 'bg-blue-100 text-blue-700 font-semibold' : 'hover:bg-gray-200'}`}>🕒 Horario</button>
               </li>
@@ -81,7 +78,7 @@ export default function Sidebar({ vistaActiva, setVistaActiva, user }) {
         {vistaActiva === 'perfil' && <VistaPerfil user={user} datosUsuario={datosUsuario} />}
         {vistaActiva === 'usuarios' && isAdmin && <VistaUsuarios datosUsuario={datosUsuario} />}
         {vistaActiva === 'historial' && isTerapeuta && <VistaHistorial />}
-        {vistaActiva === 'sesiones' && isTerapeuta && <VistaSesiones />}
+        {vistaActiva === 'sesiones' && <VistaSesiones />}
         {vistaActiva === 'horario' && isTerapeuta && <VistaHorario />}
         {vistaActiva === 'terapeutas' && <VistaTerapeutas />}
       </section>
