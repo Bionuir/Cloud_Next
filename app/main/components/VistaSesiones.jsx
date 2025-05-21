@@ -5,13 +5,13 @@ import PopupDiagnostico from './PopupDiagnostico';
 
 export default function VistaSesiones({ user, datosUsuario }) {
   const [sesiones, setSesiones] = useState([]);
-  const [loading, setLoading]   = useState(true);
-  const [error, setError]       = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
   const [selectedSession, setSelectedSession] = useState(null);
 
   useEffect(() => {
-    if (!user?.uid || datosUsuario == null) {
+    if (!user?.uid || !datosUsuario) {
       setError('Datos de usuario no disponibles');
       setLoading(false);
       return;
@@ -21,13 +21,12 @@ export default function VistaSesiones({ user, datosUsuario }) {
     const params = new URLSearchParams();
     if (rol === 6) params.append('paciente_id', user.uid);
     else if (rol === 4) params.append('terapeuta_id', user.uid);
-    else {
-      setError('No estás autorizado para ver sesiones');
-      setLoading(false);
-      return;
-    }
 
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/sesion/list?${params}`)
+    const url = rol === 1
+      ? `${process.env.NEXT_PUBLIC_API_URL}/api/sesion/listall`
+      : `${process.env.NEXT_PUBLIC_API_URL}/api/sesion/list?${params.toString()}`;
+
+    fetch(url)
       .then(res => res.ok ? res.json() : Promise.reject(res.statusText))
       .then(data => setSesiones(data))
       .catch(err => setError(err.toString()))
@@ -46,12 +45,26 @@ export default function VistaSesiones({ user, datosUsuario }) {
       );
       if (!res.ok) throw new Error('Error actualizando sesión');
       const updated = await res.json();
-      setSesiones(s =>
-        s.map(x => x.session_id === updated.session_id ? updated : x)
-      );
+      setSesiones(s => s.map(x => x.session_id === updated.session_id ? updated : x));
     } catch (err) {
       console.error(err);
       alert('No fue posible cambiar el estado');
+    }
+  };
+
+  const eliminarSesion = async (session_id) => {
+    if (!confirm('¿Seguro que quieres eliminar esta sesión?')) return;
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/sesion/${session_id}`,
+        { method: 'DELETE' }
+      );
+      if (!res.ok) throw new Error('Error eliminando sesión');
+      setSesiones(s => s.filter(x => x.session_id !== session_id));
+    } catch (err) {
+      console.error(err);
+      alert('No fue posible eliminar la sesión');
     }
   };
 
@@ -60,18 +73,14 @@ export default function VistaSesiones({ user, datosUsuario }) {
     setShowPopup(true);
   };
 
-  const onDiagnosticSuccess = (newDiag) => {
+  const onDiagnosticSuccess = () => {
     setShowPopup(false);
     alert('Diagnóstico guardado correctamente');
-    // opcional: actualizar lista de sesiones
   };
 
   if (loading) return <p>Cargando sesiones...</p>;
-  if (error)   return <p className="text-red-600">{error}</p>;
+  if (error) return <p className="text-red-600">{error}</p>;
   if (sesiones.length === 0) return <p>No hay sesiones.</p>;
-
-  const pendientes  = sesiones.filter(s => s.estado === 'pendiente');
-  const confirmadas = sesiones.filter(s => s.estado === 'confirmada');
 
   const renderItem = (s) => (
     <div key={s.session_id} className="border rounded-lg p-4 mb-3 bg-white shadow">
@@ -112,24 +121,24 @@ export default function VistaSesiones({ user, datosUsuario }) {
           </button>
         </div>
       )}
+
+      {datosUsuario.rol === 1 && (
+        <div className="mt-3">
+          <button
+            onClick={() => eliminarSesion(s.session_id)}
+            className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700"
+          >
+            Eliminar sesión
+          </button>
+        </div>
+      )}
     </div>
   );
 
   return (
     <div className="max-w-xl mx-auto p-4">
-      {confirmadas.length > 0 && (
-        <>
-          <h2 className="text-xl font-semibold mb-2">Confirmadas</h2>
-          {confirmadas.map(renderItem)}
-        </>
-      )}
-      {pendientes.length > 0 && (
-        <>
-          <h2 className="text-xl font-semibold mt-4 mb-2">Pendientes</h2>
-          {pendientes.map(renderItem)}
-        </>
-      )}
-
+      <h2 className="text-xl font-semibold mb-4">Sesiones</h2>
+      {sesiones.map(renderItem)}
       {showPopup && (
         <PopupDiagnostico
           sessionId={selectedSession}
