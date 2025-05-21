@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import * as yup from 'yup';
 
 export default function PopupDiagnostico({ sessionId, onClose, onSuccess }) {
   const [form, setForm] = useState({
@@ -14,7 +15,9 @@ export default function PopupDiagnostico({ sessionId, onClose, onSuccess }) {
   const [error, setError]     = useState(null);
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    const sanitizedValue = yup.string().trim().cast(value);
+    setForm(prev => ({ ...prev, [name]: sanitizedValue }));
   };
 
   const handleSubmit = async (e) => {
