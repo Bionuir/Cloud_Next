@@ -10,6 +10,7 @@ import VistaHorario from './VistaHorario';
 import VistaHistorial from './VistaHistorial';
 import VistaTerapeutas from './VistaTerapeutas';
 import VistaSesiones from './VistaSesiones';
+import VistaDiagnostico from './VistaDiagnostico';
 
 export default function Sidebar({ vistaActiva, setVistaActiva, user }) {
   const [datosUsuario, setDatosUsuario] = useState(null);
@@ -60,6 +61,11 @@ export default function Sidebar({ vistaActiva, setVistaActiva, user }) {
           <li>
             <button onClick={() => setVistaActiva('sesiones')} className={`w-full text-left px-3 py-2 rounded-lg transition ${vistaActiva === 'sesiones' ? 'bg-blue-100 text-blue-700 font-semibold' : 'hover:bg-gray-200'}`}>🗓️ Sesiones</button>
           </li>
+          {datosUsuario?.rol === 6 && (
+            <li>
+              <button onClick={() => setVistaActiva('diagnostico')} className={`w-full text-left px-3 py-2 rounded-lg transition ${vistaActiva === 'diagnostico' ? 'bg-blue-100 text-blue-700 font-semibold' : 'hover:bg-gray-200'}`}>💡 Diagnóstico</button>
+            </li>
+          )}
           {isTerapeuta && (
             <>
               <li>
@@ -78,7 +84,10 @@ export default function Sidebar({ vistaActiva, setVistaActiva, user }) {
         {vistaActiva === 'perfil' && <VistaPerfil user={user} datosUsuario={datosUsuario} />}
         {vistaActiva === 'usuarios' && isAdmin && <VistaUsuarios datosUsuario={datosUsuario} />}
         {vistaActiva === 'historial' && isTerapeuta && <VistaHistorial />}
-        {vistaActiva === 'sesiones' && <VistaSesiones />}
+        {vistaActiva === 'sesiones' && <VistaSesiones user={user} datosUsuario={datosUsuario} />}
+        {vistaActiva === 'diagnostico' && datosUsuario?.rol === 6 && (
+          <VistaDiagnostico user={user} datosUsuario={datosUsuario} />
+        )}
         {vistaActiva === 'horario' && isTerapeuta && <VistaHorario />}
         {vistaActiva === 'terapeutas' && <VistaTerapeutas />}
       </section>

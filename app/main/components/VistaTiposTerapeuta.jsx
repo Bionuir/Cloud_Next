@@ -2,6 +2,29 @@
 
 import { useEffect, useState } from 'react';
 
+function TipoTerapeutaCard({ tipo }) {
+  return (
+    <div className="border border-gray-300 rounded-lg shadow-lg p-4 mb-4 bg-white">
+      <table className="w-full table-auto border-collapse">
+        <tbody>
+          <tr>
+            <th className="text-left font-semibold p-2">Nombre:</th>
+            <td className="p-2">{tipo.nombre}</td>
+          </tr>
+          <tr>
+            <th className="text-left font-semibold p-2">Tipo:</th>
+            <td className="p-2">{tipo.tipo}</td>
+          </tr>
+          <tr>
+            <th className="text-left font-semibold p-2">Descripción:</th>
+            <td className="p-2">{tipo.descripcion}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 export default function VistaTiposTerapeuta() {
   const [tipos, setTipos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -36,29 +59,13 @@ export default function VistaTiposTerapeuta() {
   return (
     <div className="max-w-6xl mx-auto p-6">
       <h1 className="text-3xl font-bold mb-6">Tipos de Terapeuta</h1>
-
       {tipos.length === 0 ? (
         <p>No hay tipos de terapeuta registrados.</p>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full table-auto border-collapse border border-gray-300">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="border border-gray-300 p-2 text-left">Nombre</th>
-                <th className="border border-gray-300 p-2 text-left">Tipo</th>
-                <th className="border border-gray-300 p-2 text-left">Descripción</th>
-              </tr>
-            </thead>
-            <tbody>
-              {tipos.map((t) => (
-                <tr key={t._id}>
-                  <td className="border border-gray-300 p-2">{t.nombre}</td>
-                  <td className="border border-gray-300 p-2">{t.tipo}</td>
-                  <td className="border border-gray-300 p-2">{t.descripcion}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div>
+          {tipos.map((tipo) => (
+            <TipoTerapeutaCard key={tipo._id} tipo={tipo} />
+          ))}
         </div>
       )}
     </div>
