@@ -83,7 +83,7 @@ export default function VistaSesiones({ user, datosUsuario }) {
   if (sesiones.length === 0) return <p>No hay sesiones.</p>;
 
   const renderItem = (s) => (
-    <div key={s.session_id} className="border rounded-lg p-4 mb-3 bg-white shadow">
+    <div key={s.session_id} className="sesiones-card">
       <p><strong>Fecha:</strong> {new Date(s.fecha).toLocaleDateString()}</p>
       <p>
         <strong>Hora:</strong>{' '}
@@ -95,16 +95,16 @@ export default function VistaSesiones({ user, datosUsuario }) {
       <p><strong>Estado:</strong> {s.estado}</p>
 
       {s.estado === 'pendiente' && datosUsuario.rol === 4 && (
-        <div className="mt-3 space-x-2">
+        <div className="button-group">
           <button
             onClick={() => updateEstado(s.session_id, 'confirmada')}
-            className="px-4 py-2 rounded bg-green-500 text-white hover:bg-green-600"
+            className="btn-confirm"
           >
             Confirmar
           </button>
           <button
             onClick={() => updateEstado(s.session_id, 'rechazada')}
-            className="px-4 py-2 rounded bg-red-500 text-white hover:bg-red-600"
+            className="btn-reject"
           >
             Rechazar
           </button>
@@ -112,10 +112,10 @@ export default function VistaSesiones({ user, datosUsuario }) {
       )}
 
       {s.estado === 'confirmada' && datosUsuario.rol === 4 && (
-        <div className="mt-3">
+        <div className="button-group">
           <button
             onClick={() => openDiagnostico(s.session_id)}
-            className="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600"
+            className="btn-diagnose"
           >
             Diagnosticar
           </button>
@@ -123,10 +123,10 @@ export default function VistaSesiones({ user, datosUsuario }) {
       )}
 
       {datosUsuario.rol === 1 && (
-        <div className="mt-3">
+        <div className="button-group">
           <button
             onClick={() => eliminarSesion(s.session_id)}
-            className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700"
+            className="btn-delete"
           >
             Eliminar sesión
           </button>
@@ -136,8 +136,8 @@ export default function VistaSesiones({ user, datosUsuario }) {
   );
 
   return (
-    <div className="max-w-xl mx-auto p-4">
-      <h2 className="text-xl font-semibold mb-4">Sesiones</h2>
+    <div className="sesiones-container">
+      <h2 className="sesiones-heading">Sesiones</h2>
       {sesiones.map(renderItem)}
       {showPopup && (
         <PopupDiagnostico
@@ -146,6 +146,69 @@ export default function VistaSesiones({ user, datosUsuario }) {
           onSuccess={onDiagnosticSuccess}
         />
       )}
+      {/* Se usa style jsx global para aplicar los estilos de forma global,
+          igual que en VistaTerapeutas */}
+      <style jsx global>{`
+        .sesiones-container {
+          padding: 1rem;
+          max-width: 800px;
+          margin: 0 auto;
+        }
+        .sesiones-heading {
+          font-size: 24px;
+          font-weight: bold;
+          margin-bottom: 1rem;
+          text-align: center;
+        }
+        .sesiones-card {
+          background-color: #fff;
+          box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+          padding: 1rem;
+          border-radius: 1rem;
+          border: 1px solid #ccc;
+          margin-bottom: 1rem;
+        }
+        .button-group {
+          margin-top: 1rem;
+          display: flex;
+          gap: 1rem;
+        }
+        .btn-confirm,
+        .btn-reject,
+        .btn-diagnose,
+        .btn-delete {
+          padding: 0.5rem 1rem;
+          border: none;
+          border-radius: 0.5rem;
+          color: #fff;
+          cursor: pointer;
+          transition: background-color 0.3s;
+        }
+        .btn-confirm {
+          background-color: #A294F9;
+        }
+        .btn-confirm:hover {
+          background-color: #8A80E2;
+        }
+        .btn-reject {
+          background-color: #f56565;
+        }
+        .btn-reject:hover {
+          background-color: #e53e3e;
+        }
+        .btn-diagnose {
+          background-color: #A294F9;
+        }
+        .btn-diagnose:hover {
+          background-color: #8A80E2;
+        }
+        .btn-delete {
+          background-color: #f56565;
+        }
+        .btn-delete:hover {
+          background-color: #e53e3e;
+        }
+      `}</style>
     </div>
   );
 }

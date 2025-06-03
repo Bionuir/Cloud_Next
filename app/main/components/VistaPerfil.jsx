@@ -212,16 +212,16 @@ export default function VistaPerfil({ user, datosUsuario }) {
         .perfil-logout-btn {
           margin-top: 0.5rem;
           background-color: transparent; // por defecto transparente
-          color: #ef4444; // texto en rojo
+          color: #f56565; // texto en rojo
           padding: 0.5rem 1rem;
-          border: 1px solid #ef4444; // borde rojo
+          border: 1px solid #f56565; // borde rojo
           border-radius: 0.5rem;
           cursor: pointer;
           transition: background-color 0.3s, color 0.3s;
         }
         .perfil-logout-btn:hover,
         .perfil-logout-btn:focus {
-          background-color: #ef4444; // fondo rojo al hover y focus
+          background-color: #f56565; // fondo rojo al hover y focus
           color: white; // texto blanco al hover y focus
         }
       `}</style>
