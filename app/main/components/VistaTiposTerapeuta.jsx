@@ -3,24 +3,61 @@
 import { useEffect, useState } from 'react';
 
 function TipoTerapeutaCard({ tipo }) {
+  const [open, setOpen] = useState(false);
   return (
-    <div className="border border-gray-300 rounded-lg shadow-lg p-4 mb-4 bg-white">
-      <table className="w-full table-auto border-collapse">
-        <tbody>
-          <tr>
-            <th className="text-left font-semibold p-2">Nombre:</th>
-            <td className="p-2">{tipo.nombre}</td>
-          </tr>
-          <tr>
-            <th className="text-left font-semibold p-2">Tipo:</th>
-            <td className="p-2">{tipo.tipo}</td>
-          </tr>
-          <tr>
-            <th className="text-left font-semibold p-2">Descripción:</th>
-            <td className="p-2">{tipo.descripcion}</td>
-          </tr>
-        </tbody>
-      </table>
+    <div className="tipo-card">
+      <div className="tipo-header" onClick={() => setOpen(!open)}>
+        <h3 className="tipo-title">{tipo.nombre}</h3>
+        <span className="tipo-toggle">{open ? '-' : '+'}</span>
+      </div>
+      <div className={`tipo-details ${open ? 'open' : ''}`}>
+        <p>
+          <strong>Tipo:</strong> {tipo.tipo}
+        </p>
+        <p>
+          <strong>Descripción:</strong> {tipo.descripcion}
+        </p>
+      </div>
+      <style jsx>{`
+        .tipo-card {
+          background-color: #fff;
+          border: 1px solid #ccc;
+          border-radius: 1rem;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+          overflow: hidden;
+          transition: all 0.3s;
+        }
+        .tipo-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 1rem;
+          cursor: pointer;
+          background-color: #f5efff;
+        }
+        .tipo-title {
+          font-size: 1.25rem;
+          font-weight: 600;
+          margin: 0;
+        }
+        .tipo-toggle {
+          font-size: 1.5rem;
+          font-weight: bold;
+          user-select: none;
+        }
+        .tipo-details {
+          max-height: 0;
+          opacity: 0;
+          overflow: hidden;
+          transition: all 0.35s ease;
+          padding: 0 1rem;
+        }
+        .tipo-details.open {
+          max-height: 200px; /* Valor suficientemente alto para el contenido */
+          opacity: 1;
+          padding: 1rem;
+        }
+      `}</style>
     </div>
   );
 }
@@ -53,21 +90,48 @@ export default function VistaTiposTerapeuta() {
     fetchTipos();
   }, []);
 
-  if (loading) return <p className="p-4">Cargando tipos de terapeuta...</p>;
-  if (error) return <p className="p-4 text-red-600">{error}</p>;
+  if (loading) return <p className="tipo-loading">Cargando tipos de terapeuta...</p>;
+  if (error) return <p className="tipo-error">{error}</p>;
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6">Tipos de Terapeuta</h1>
+    <div className="tipo-container">
+      <h1 className="tipo-heading">Tipos de Terapeuta</h1>
       {tipos.length === 0 ? (
         <p>No hay tipos de terapeuta registrados.</p>
       ) : (
-        <div>
+        <div className="tipo-list">
           {tipos.map((tipo) => (
             <TipoTerapeutaCard key={tipo._id} tipo={tipo} />
           ))}
         </div>
       )}
+      <style jsx>{`
+        .tipo-container {
+          max-width: 96rem;
+          margin: 0 auto;
+          padding: 1.5rem;
+        }
+        .tipo-heading {
+          font-size: 2rem;
+          font-weight: bold;
+          margin-bottom: 1.5rem;
+          text-align: center;
+        }
+        .tipo-loading,
+        .tipo-error {
+          padding: 1rem;
+          text-align: center;
+          font-size: 1rem;
+        }
+        .tipo-error {
+          color: #dc2626;
+        }
+        .tipo-list {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+        }
+      `}</style>
     </div>
   );
 }

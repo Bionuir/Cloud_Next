@@ -39,31 +39,25 @@ export default function VistaUsuarios() {
     }
   };
 
-  const ROLES = {
-    1: 'Admin',
-    4: 'Terapeuta',
-    6: 'Paciente'
-  };
-
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">👥 Lista de Usuarios</h1>
-      <table className="w-full border">
+      <h1 className="title">👥 Lista de Usuarios</h1>
+      <table className="userTable">
         <thead>
-          <tr className="bg-gray-100 text-left">
-            <th className="p-2 border">Nombre</th>
-            <th className="p-2 border">Correo</th>
-            <th className="p-2 border">Rol</th>
+          <tr>
+            <th className="tableCell">Nombre</th>
+            <th className="tableCell">Correo</th>
+            <th className="tableCell">Rol</th>
           </tr>
         </thead>
         <tbody>
           {usuarios.map((user) => (
-            <tr key={user._id} className="border-t">
-              <td className="p-2 border">{user.nombre} {user.apellido}</td>
-              <td className="p-2 border">{user.correo}</td>
-              <td className="p-2 border">
+            <tr key={user._id} className="tableRow">
+              <td className="tableCell">{user.nombre} {user.apellido}</td>
+              <td className="tableCell">{user.correo}</td>
+              <td className="tableCell">
                 <select
-                  className="border rounded px-2 py-1 bg-white disabled:bg-gray-100 disabled:text-gray-500"
+                  className="selectRol"
                   value={user.rol}
                   onChange={(e) => actualizarRol(user.googleId, parseInt(e.target.value))}
                   disabled={user.rol === 1} // Deshabilita si es admin
@@ -82,6 +76,45 @@ export default function VistaUsuarios() {
           ))}
         </tbody>
       </table>
+      <style jsx>{`
+        .title {
+          font-size: 2rem;
+          font-weight: bold;
+          margin-bottom: 1.5rem;
+        }
+        .userTable {
+          width: 100%;
+          border-radius: 30px;
+          background-color: #F5EFFF;
+          border-collapse: collapse;
+          transition: all 0.3s ease;
+          
+        }
+        .tableCell {
+          padding: 1.0rem;
+          text-align: center;
+        }
+        .tableRow {
+          transition: background-color 0.3s ease;
+        }
+        .tableRow:hover {
+          background-color: #E8DFF5;
+        }
+        .selectRol {
+          border-radius: 4px;
+          padding: 0.25rem 0.5rem;
+          background-color: #fff;
+        }
+        .selectRol:disabled {
+          background-color: #e0e0e0;
+          color: #555;
+        }
+        @media (max-width: 768px) {
+          .userTable, .tableCell {
+            font-size: 0.9rem;
+          }
+        }
+      `}</style>
     </div>
   );
 }
