@@ -1,7 +1,7 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { auth, googleProvider } from '../lib/firebase';
-import { createUserWithEmailAndPassword, signInWithPopup, getIdToken } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithPopup, getIdToken, onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import * as yup from 'yup';
 
@@ -39,6 +39,16 @@ export default function Register() {
   const [telefono, setTelefono] = useState('');
   const [error, setError] = useState('');
   const router = useRouter();
+
+  // Add session check
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        router.push('/main');
+      }
+    });
+    return unsubscribe;
+  }, []);
 
   async function handleEmailRegister(e) {
     e.preventDefault();
@@ -200,10 +210,6 @@ export default function Register() {
             </button>
           </form>
 
-          <div className="or-separator">
-            <span>o</span>
-          </div>
-
           <button onClick={handleGoogle} className="google-btn">
             <span className="google-icon">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 48 48">
@@ -216,6 +222,18 @@ export default function Register() {
             </span>
             Registrarse con Google
           </button>
+
+          {/* New login section */}
+          <div className="login-section">
+            <p>¿Ya tienes una cuenta?</p>
+            <button type="button" className="login-btn" onClick={() => router.push('/login')}>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-5">
+                <path fillRule="evenodd" d="M4.25 5.5a.75.75 0 0 0-.75.75v8.5c0 .414.336.75.75.75h8.5a.75.75 0 0 0 .75-.75v-4a.75.75 0 0 1 1.5 0v4A2.25 2.25 0 0 1 12.75 17h-8.5A2.25 2.25 0 0 1 2 14.75v-8.5A2.25 2.25 0 0 1 4.25 4h5a.75.75 0 0 1 0 1.5h-5Z" clipRule="evenodd" />
+                <path fillRule="evenodd" d="M6.194 12.753a.75.75 0 0 0 1.06.053L16.5 4.44v2.81a.75.75 0 0 0 1.5 0v-4.5a.75.75 0 0 0-.75-.75h-4.5a.75.75 0 0 0 0 1.5h2.553l-9.056 8.194a.75.75 0 0 0-.053 1.06Z" clipRule="evenodd" />
+              </svg>
+              Iniciar sesion
+            </button>
+          </div>
         </div>
       </div>
       <style jsx>{`
@@ -291,6 +309,7 @@ export default function Register() {
           background-color: #8A80E2;
         }
         .google-btn {
+          margin-top: 1rem;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -316,6 +335,31 @@ export default function Register() {
           text-align: center;
           margin: 1rem 0;
           color: #718096;
+        }
+        /* New Styles for login button */
+        .login-section {
+          text-align: center;
+          margin-top: 1rem;
+        }
+        .login-btn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+          border: 1px solid #A294F9;
+          color: #A294F9;
+          background-color: transparent;
+          padding: 0.5rem 1rem;
+          border-radius: 0.5rem;
+          cursor: pointer;
+          transition: background-color 0.3s, color 0.3s;
+          width: 100%;
+          margin-top: 0.5rem;
+        }
+        .login-btn:hover,
+        .login-btn:focus {
+          background-color: #A294F9;
+          color: white;
         }
       `}</style>
     </>

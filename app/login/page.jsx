@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { auth, googleProvider } from '../lib/firebase';
-import { signInWithEmailAndPassword, signInWithPopup, getIdToken } from 'firebase/auth';
+import { signInWithEmailAndPassword, signInWithPopup, getIdToken, onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import * as yup from 'yup';
 
@@ -18,6 +18,16 @@ export default function Login() {
   const [cooldownActive, setCooldownActive] = useState(false);
   const [cooldownTimeLeft, setCooldownTimeLeft] = useState(0);
   const router = useRouter();
+
+  // Add session check
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        router.push('/main');
+      }
+    });
+    return unsubscribe;
+  }, []);
 
   useEffect(() => {
     const cooldownExpiration = localStorage.getItem('cooldownExpiration');
@@ -182,9 +192,6 @@ export default function Login() {
             </button>
           </form>
 
-          <div className="or-separator">
-            <span>o</span>
-          </div>
 
           <button onClick={handleGoogle} className="google-btn">
             <span className="google-icon">
@@ -198,6 +205,20 @@ export default function Login() {
             </span>
             Iniciar con Google
           </button>
+
+          {/* New registration section */}
+          <div className="register-section">
+            <p>¿Aun no tienes cuenta?</p>
+            <button className="register-btn" onClick={() => router.push('/register')}>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-5">
+  <path fillRule="evenodd" d="M4.25 5.5a.75.75 0 0 0-.75.75v8.5c0 .414.336.75.75.75h8.5a.75.75 0 0 0 .75-.75v-4a.75.75 0 0 1 1.5 0v4A2.25 2.25 0 0 1 12.75 17h-8.5A2.25 2.25 0 0 1 2 14.75v-8.5A2.25 2.25 0 0 1 4.25 4h5a.75.75 0 0 1 0 1.5h-5Z" clipRule="evenodd" />
+  <path fillRule="evenodd" d="M6.194 12.753a.75.75 0 0 0 1.06.053L16.5 4.44v2.81a.75.75 0 0 0 1.5 0v-4.5a.75.75 0 0 0-.75-.75h-4.5a.75.75 0 0 0 0 1.5h2.553l-9.056 8.194a.75.75 0 0 0-.053 1.06Z" clipRule="evenodd" />
+</svg>
+
+
+              Registrarse
+            </button>
+          </div>
         </div>
       </div>
       <style jsx>{`
@@ -268,6 +289,7 @@ export default function Login() {
           cursor: not-allowed;
         }
         .google-btn {
+          margin-top: 1.0rem;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -285,14 +307,33 @@ export default function Login() {
           background-color: #f7f7f7;
           border-color: #aaa;
         }
-        .google-icon {
+        /* New Styles for register button */
+        .register-section {
+          text-align: center;
+          margin-top: 1rem;
+        }
+        .register-section p{
+          opacity:0.8
+        }
+        .register-btn {
+          border: 1px solid #A294F9;
+          color: #A294F9;
+          background-color: transparent;
+          padding: 0.5rem 1rem;
+          border-radius: 0.5rem;
+          cursor: pointer;
+          transition: background-color 0.3s, color 0.3s;
+          width: 100%;
+          margin-top: 0.5rem;
           display: flex;
           align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
         }
-        .or-separator {
-          text-align: center;
-          margin: 1rem 0;
-          color: #718096;
+        .register-btn:hover,
+        .register-btn:focus {
+          background-color: #A294F9;
+          color: white;
         }
       `}</style>
     </>
