@@ -54,85 +54,182 @@ export default function PopupDiagnostico({ sessionId, onClose, onSuccess }) {
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-lg shadow-lg relative">
-        <h2 className="text-xl font-semibold mb-4">Formulario de Diagnóstico</h2>
+    <div className="agendar-sesion-container">
+      <div className="agendar-sesion-box">
+        <h2 className="agendar-sesion-heading">Formulario de Diagnóstico</h2>
 
-        {error && <p className="text-red-600 mb-2">{error}</p>}
+        {error && <p className="error-text">{error}</p>}
 
-        <form onSubmit={handleSubmit} className="space-y-3">
-          <div>
-            <label className="block font-medium">Nota del terapeuta</label>
-            <textarea
-              name="nota_terapeuta"
-              value={form.nota_terapeuta}
-              onChange={handleChange}
-              className="w-full border p-2 rounded"
-              required
-            />
+        <form onSubmit={handleSubmit}>
+          <div className="two-columns">
+            <div className="left-column">
+              <div className="form-group">
+                <label className="agendar-sesion-label">Estado emocional al inicio</label>
+                <input
+                  type="text"
+                  name="estado_emocional_inicio"
+                  value={form.estado_emocional_inicio}
+                  onChange={handleChange}
+                  className="agendar-sesion-input"
+                />
+              </div>
+              <div className="form-group">
+                <label className="agendar-sesion-label">Nota del terapeuta</label>
+                <textarea
+                  name="nota_terapeuta"
+                  value={form.nota_terapeuta}
+                  onChange={handleChange}
+                  className="agendar-sesion-textarea"
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label className="agendar-sesion-label">Estado emocional al final</label>
+                <input
+                  type="text"
+                  name="estado_emocional_final"
+                  value={form.estado_emocional_final}
+                  onChange={handleChange}
+                  className="agendar-sesion-input"
+                />
+              </div>
+            </div>
+            <div className="right-column">
+              <div className="form-group">
+                <label className="agendar-sesion-label">Diagnóstico</label>
+                <textarea
+                  name="diagnostico"
+                  value={form.diagnostico}
+                  onChange={handleChange}
+                  className="agendar-sesion-textarea"
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label className="agendar-sesion-label">Tratamiento recomendado</label>
+                <textarea
+                  name="tratamiento_recomendado"
+                  value={form.tratamiento_recomendado}
+                  onChange={handleChange}
+                  className="agendar-sesion-textarea"
+                />
+              </div>
+            </div>
           </div>
-
-          <div>
-            <label className="block font-medium">Diagnóstico</label>
-            <textarea
-              name="diagnostico"
-              value={form.diagnostico}
-              onChange={handleChange}
-              className="w-full border p-2 rounded"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block font-medium">Tratamiento recomendado</label>
-            <textarea
-              name="tratamiento_recomendado"
-              value={form.tratamiento_recomendado}
-              onChange={handleChange}
-              className="w-full border p-2 rounded"
-            />
-          </div>
-
-          <div>
-            <label className="block font-medium">Estado emocional al inicio</label>
-            <input
-              type="text"
-              name="estado_emocional_inicio"
-              value={form.estado_emocional_inicio}
-              onChange={handleChange}
-              className="w-full border p-2 rounded"
-            />
-          </div>
-
-          <div>
-            <label className="block font-medium">Estado emocional al final</label>
-            <input
-              type="text"
-              name="estado_emocional_final"
-              value={form.estado_emocional_final}
-              onChange={handleChange}
-              className="w-full border p-2 rounded"
-            />
-          </div>
-
-          <div className="flex justify-end mt-4 space-x-2">
+          <div className="button-group">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400"
+              className="agendar-sesion-button cancel-btn"
+              disabled={loading}
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700"
+              className="agendar-sesion-button submit-btn"
             >
-              {loading ? 'Guardando...' : 'Guardar diagnóstico'}
+              {loading ? 'Subiendo...' : 'Subir diagnóstico'}
             </button>
           </div>
         </form>
       </div>
+      <style jsx>{`
+        .agendar-sesion-container {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: rgba(0,0,0,0.5);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .agendar-sesion-box {
+          background-color: #F5EFFF;
+          padding: 1.5rem;
+          border-radius: 0.75rem;
+          width: 90%;
+          max-width: 60rem; /* modificado de 28rem a 40rem para columnas más anchas */
+        }
+        .agendar-sesion-heading {
+          font-size: 1.25rem;
+          font-weight: 600;
+          margin: 0 0 1rem 0;
+        }
+        .agendar-sesion-label {
+          display: block;
+          font-weight: 500;
+          margin-bottom: 0.25rem;
+        }
+        .agendar-sesion-input {
+          background-color: #E5D9F2;
+          width: 100%;
+          padding: 0.5rem;
+          border-radius: 0.25rem;
+          box-sizing: border-box;
+          margin-bottom: 0.5rem;
+          min-height: 78px; /* Nuevo: altura predeterminada para textfields */
+        }
+        .agendar-sesion-textarea {
+          background-color: #E5D9F2;
+          width: 100%;
+          padding: 0.5rem;
+          border-radius: 0.25rem;
+          box-sizing: border-box;
+          margin-bottom: 0.5rem;
+          resize: vertical;
+          min-height: 200px; /* Nuevo: altura predeterminada para textareas */
+        }
+        .form-group {
+          margin-bottom: 0.5rem; /* Reduced spacing between groups */
+        }
+        .button-group {
+          display: flex;
+          justify-content: flex-end;
+          gap: 0.5rem;
+        }
+        .agendar-sesion-button {
+          padding: 0.5rem 1rem;
+          border-radius: 0.5rem;
+          cursor: pointer;
+          background-color: #fff;
+          transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .cancel-btn {
+          background-color: #fff;
+          color: #000;
+        }
+        .cancel-btn:hover {
+          background-color: #ffd8d8;
+        }
+        .submit-btn {
+          background-color: #A294F9;
+          color: #fff;
+          border: none;
+        }
+        .submit-btn:hover {
+          background-color: #CDC1FF;
+        }
+        .error-text {
+          color: red;
+          margin-bottom: 1rem;
+        }
+        .two-columns {
+          display: flex;
+          gap: 1rem;
+          margin-bottom: 1rem;
+        }
+        .left-column,
+        .right-column {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 0rem;
+        }
+      `}</style>
     </div>
   );
 }

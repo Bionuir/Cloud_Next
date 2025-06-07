@@ -10,27 +10,31 @@ export default function VistaSesiones({ user, datosUsuario }) {
   const [showPopup, setShowPopup] = useState(false);
   const [selectedSession, setSelectedSession] = useState(null);
 
-  useEffect(() => {
+    // Nueva función para obtener las sesiones desde el API
+  const fetchSesiones = () => {
     if (!user?.uid || !datosUsuario) {
       setError('Datos de usuario no disponibles');
       setLoading(false);
       return;
     }
-
+    setLoading(true);
     const rol = datosUsuario.rol;
     const params = new URLSearchParams();
     if (rol === 6) params.append('paciente_id', user.uid);
     else if (rol === 4) params.append('terapeuta_id', user.uid);
-
     const url = rol === 1
       ? `${process.env.NEXT_PUBLIC_API_URL}/api/sesion/listall`
       : `${process.env.NEXT_PUBLIC_API_URL}/api/sesion/list?${params.toString()}`;
-
     fetch(url)
       .then(res => res.ok ? res.json() : Promise.reject(res.statusText))
       .then(data => setSesiones(data))
       .catch(err => setError(err.toString()))
       .finally(() => setLoading(false));
+  };
+
+  // Se usa fetchSesiones en lugar de tener la lógica inline
+  useEffect(() => {
+    fetchSesiones();
   }, [user, datosUsuario]);
 
   const updateEstado = async (session_id, nuevoEstado) => {
@@ -45,11 +49,18 @@ export default function VistaSesiones({ user, datosUsuario }) {
       );
       if (!res.ok) throw new Error('Error actualizando sesión');
       const updated = await res.json();
-      setSesiones(s =>
-        nuevoEstado === 'rechazada'
-          ? s.filter(x => x.session_id !== session_id)
-          : s.map(x => x.session_id === updated.session_id ? updated : x)
-      );
+      if (nuevoEstado === 'confirmada') {
+        // Vuelve a hacer el get a la base de datos al confirmar
+        fetchSesiones();
+      } else if (nuevoEstado === 'rechazada') {
+        setSesiones(s =>
+          s.filter(x => x.session_id !== session_id)
+        );
+      } else {
+        setSesiones(s =>
+          s.map(x => x.session_id === updated.session_id ? updated : x)
+        );
+      }
     } catch (err) {
       console.error(err);
       alert('No fue posible cambiar el estado');

@@ -199,22 +199,17 @@ export default function AgendarSesion({ terapeuta, onClose }) {
         {/* Bloque */}
         {selectedDay && (
           <div className="agendar-sesion-block-group">
-            <span className="agendar-sesion-label">Bloque horario</span>
+            <span className="agendar-sesion-label">Bloques disponibles</span>
             <div className="agendar-sesion-block-container">
-              {hours.map((_, idx) => {
-                const bn = idx + 1;
-                const ok = availableBlocks.includes(bn);
-                return (
-                  <button
-                    key={bn}
-                    onClick={() => ok && setSelectedBlock(bn)}
-                    className={`agendar-sesion-block-btn ${selectedBlock === bn ? 'selected' : ''} ${ok ? '' : 'disabled'}`}
-                    disabled={!ok}
-                  >
-                    {bn}
-                  </button>
-                );
-              })}
+              {availableBlocks.map(bn => (
+                <button
+                  key={bn}
+                  onClick={() => setSelectedBlock(bn)}
+                  className={`agendar-sesion-block-btn ${selectedBlock === bn ? 'selected' : ''}`}
+                >
+                  {bn}
+                </button>
+              ))}
             </div>
           </div>
         )}
@@ -227,6 +222,7 @@ export default function AgendarSesion({ terapeuta, onClose }) {
             rows="3"
             value={motivo}
             onChange={e => setMotivo(e.target.value)}
+            placeholder="Escriba aqui su motivo de su Agenda"
           />
         </label>
 
@@ -249,6 +245,27 @@ export default function AgendarSesion({ terapeuta, onClose }) {
         </div>
       </div>
       <style jsx>{`
+        /* Añade fade animations a todos los botones */
+        .agendar-sesion-day-btn,
+        .agendar-sesion-block-btn,
+        .agendar-sesion-button {
+          transition: background-color 0.3s ease, color 0.3s ease, opacity 0.3s ease;
+        }
+        /* Nuevas reglas para hover con colores más suaves */
+        .agendar-sesion-day-btn:hover {
+          background-color: #CDC1FF;
+        }
+        .agendar-sesion-block-btn:hover {
+          background-color: #CDC1FF;
+        }
+        .agendar-sesion-button:hover {
+          background-color: #CDC1FF;
+          color: #fff;
+        }
+        .cancel-btn:hover {
+          background-color: #ffd8d8;
+          color: #000;
+        }
         .agendar-sesion-container {
           position: fixed;
           top: 0;
@@ -261,7 +278,7 @@ export default function AgendarSesion({ terapeuta, onClose }) {
           justify-content: center;
         }
         .agendar-sesion-box {
-          background-color: #fff;
+          background-color: #F5EFFF;
           padding: 1.5rem;
           border-radius: 0.75rem;
           width: 90%;
@@ -281,11 +298,11 @@ export default function AgendarSesion({ terapeuta, onClose }) {
         }
         .agendar-sesion-input,
         .agendar-sesion-textarea {
+          background-color: #E5D9F2;
           display: block;
           width: 100%;
           margin-top: 0.25rem;
           padding: 0.5rem;
-          border: 1px solid #ccc;
           border-radius: 0.25rem;
           box-sizing: border-box;
         }
@@ -298,13 +315,12 @@ export default function AgendarSesion({ terapeuta, onClose }) {
         }
         .agendar-sesion-day-btn {
           padding: 0.5rem 0.75rem;
-          border: 1px solid #ccc;
           border-radius: 0.25rem;
-          background-color: #e5e7eb;
+          background-color: #E5D9F2;
           cursor: pointer;
         }
         .agendar-sesion-day-btn.selected {
-          background-color: #2563eb;
+          background-color: #A294F9;
           color: #fff;
           border-color: #2563eb;
         }
@@ -315,15 +331,13 @@ export default function AgendarSesion({ terapeuta, onClose }) {
         .agendar-sesion-block-btn {
           width: 3rem;
           height: 2rem;
-          border: 1px solid #ccc;
           border-radius: 0.25rem;
-          background-color: #fff;
+          background-color: #E5D9F2;
           cursor: pointer;
         }
         .agendar-sesion-block-btn.selected {
-          background-color: #22c55e;
+          background-color: #A294F9;
           color: #fff;
-          border-color: #22c55e;
         }
         .agendar-sesion-block-btn.disabled {
           background-color: #d1d5db;
@@ -331,7 +345,6 @@ export default function AgendarSesion({ terapeuta, onClose }) {
         }
         .agendar-sesion-button {
           padding: 0.5rem 1rem;
-          border: 1px solid #ccc;
           border-radius: 0.5rem;
           cursor: pointer;
           background-color: #fff;
@@ -341,7 +354,7 @@ export default function AgendarSesion({ terapeuta, onClose }) {
           color: #000;
         }
         .submit-btn {
-          background-color: #2563eb;
+          background-color: #A294F9;
           color: #fff;
           border: none;
         }

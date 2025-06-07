@@ -159,7 +159,7 @@ export default function VistaHorario() {
                 const key = `${day}-${hour}`;
                 const isSelected = selectedCells[key];
                 const cellStyle = {
-                  backgroundColor: isSelected ? 'transparent' : '#A294F9',
+                  backgroundColor: isSelected ? '#A294F9' : '#E5D9F2',
                   cursor: 'pointer'
                 };
                 if (isSelected) {
