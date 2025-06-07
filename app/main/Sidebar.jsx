@@ -11,6 +11,7 @@ import VistaHistorial from './components/VistaHistorial';
 import VistaTerapeutas from './components/VistaTerapeutas';
 import VistaSesiones from './components/VistaSesiones';
 import VistaDiagnostico from './components/VistaDiagnostico';
+import './sidebar.css';
 
 export default function Sidebar({ vistaActiva, setVistaActiva, user }) {
   const [datosUsuario, setDatosUsuario] = useState(null);
@@ -29,6 +30,7 @@ export default function Sidebar({ vistaActiva, setVistaActiva, user }) {
         setDatosUsuario(data);
       } catch (error) {
         console.error('Error al obtener datos del backend:', error);
+        setTimeout(obtenerDatos, 1000); // Reintentar en 1 segundo
       }
     };
 
@@ -117,68 +119,6 @@ export default function Sidebar({ vistaActiva, setVistaActiva, user }) {
           {vistaActiva === 'terapeutas' && <VistaTerapeutas />}
         </section>
       </div>
-      <style jsx>{`
-        .sidebar-container {
-          display: flex;
-          border-radius: 2rem;
-          box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4); // Sombreado más notorio
-          overflow: hidden;
-          background-color: #eff6ff;
-          height: calc(100vh - 3rem);
-        }
-        .sidebar-aside {
-          width: 288px;
-          background-color: #CDC1FF;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-        }
-        .sidebar-title {
-          font-size: 1.25rem;
-          font-weight: 600;
-          margin-bottom: 1.5rem;
-          text-align: center;
-          padding: 0 5rem;
-        }
-        .sidebar-list {
-          list-style: none;
-          padding: 0;
-          margin: 0;
-        }
-        .sidebar-list li button {
-          border-radius: 0.5rem;
-          width: 100%;
-          text-align: left;
-          padding: 1rem;
-          transition: background-color 0.3s;
-          font-weight: bold;
-          border: none;
-          background: #CDC1FF;
-          color: white;
-          cursor: pointer;
-        }
-        .sidebar-menu-item {
-          box-shadow: 0 5px 40px rgba(0, 0, 0, 0.2); // Sombreado aplicado al contenedor
-          border-radius: 1rem;
-        }
-        // Aplicar separador blanco entre contenedores
-        .sidebar-list li + li .sidebar-menu-item {
-          border-top: 1px solid rgba(255, 255, 255, 0.6);
-        }
-        .sidebar-list li button.active {
-          background-color: #A294F9;
-        }
-        .sidebar-list li button:hover,
-        .sidebar-list li button:focus {
-          background-color: #A294F9;
-        }
-        .sidebar-content {
-          flex: 1;
-          padding: 2rem;
-          overflow-y: auto;
-          background-color: #E5D9F2;
-        }
-      `}</style>
     </>
   );
 }

@@ -4,6 +4,7 @@ import { auth, googleProvider } from '../lib/firebase';
 import { signInWithEmailAndPassword, signInWithPopup, getIdToken, onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import * as yup from 'yup';
+import './login.css';
 
 const loginSchema = yup.object().shape({
   email: yup.string().email('Correo inválido').required('El correo es obligatorio'),
@@ -215,121 +216,6 @@ export default function Login() {
           </div>
         </div>
       </div>
-      <style jsx>{`
-        .page {
-          background-color: #A294F9;
-          min-height: 100vh;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        .login-card {
-          background-color: #F5EFFF;
-          padding: 24px;
-          border-radius: 1rem;
-          box-shadow: 0 8px 40px rgba(0,0,0,0.4);
-          width: 100%;
-          max-width: 400px;
-        }
-        .login-heading {
-          font-size: 1.5rem;
-          font-weight: 600;
-          color: #2d3748;
-          text-align: center;
-          margin-bottom: 1rem;
-        }
-        .error-box {
-          background-color: #fee2e2;
-          color: #b91c1c;
-          padding: 8px 16px;
-          border-radius: 0.375rem;
-          text-align: center;
-          font-size: 0.875rem;
-          margin-bottom: 1rem;
-        }
-        .form-group {
-          margin-bottom: 1rem;
-        }
-        .form-label {
-          display: block;
-          font-size: 0.875rem;
-          font-weight: 500;
-          color: #4a5568;
-          margin-bottom: 0.5rem;
-        }
-        .form-input {
-          width: 100%;
-          padding: 8px 12px;
-          border: 1px solid #d1d5db;
-          border-radius: 0.375rem;
-          font-size: 1rem;
-        }
-        .perfil-save-btn {
-          margin-top: 0.25rem;
-          background-color: #A294F9;
-          color: white;
-          padding: 0.5rem 1rem;
-          border: none;
-          border-radius: 0.5rem;
-          cursor: pointer;
-          transition: background-color 0.3s;
-          width: 100%;
-        }
-        .perfil-save-btn:hover:enabled {
-          background-color: #8A80E2;
-        }
-        .perfil-save-btn:disabled {
-          opacity: 0.5;
-          cursor: not-allowed;
-        }
-        .google-btn {
-          margin-top: 1.0rem;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 0.5rem;
-          background-color: #fff;
-          color: #555;
-          border: 1px solid #ccc;
-          padding: 0.5rem 1rem;
-          border-radius: 0.5rem;
-          cursor: pointer;
-          transition: background-color 0.3s, border 0.3s;
-          width: 100%;
-        }
-        .google-btn:hover {
-          background-color: #f7f7f7;
-          border-color: #aaa;
-        }
-        /* New Styles for register button */
-        .register-section {
-          text-align: center;
-          margin-top: 1rem;
-        }
-        .register-section p{
-          opacity:0.8
-        }
-        .register-btn {
-          border: 1px solid #A294F9;
-          color: #A294F9;
-          background-color: transparent;
-          padding: 0.5rem 1rem;
-          border-radius: 0.5rem;
-          cursor: pointer;
-          transition: background-color 0.3s, color 0.3s;
-          width: 100%;
-          margin-top: 0.5rem;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 0.5rem;
-        }
-        .register-btn:hover,
-        .register-btn:focus {
-          background-color: #A294F9;
-          color: white;
-        }
-      `}</style>
     </>
   );
 }

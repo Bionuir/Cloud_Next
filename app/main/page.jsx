@@ -1,10 +1,10 @@
 'use client';
-
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../lib/firebase';
 import Sidebar from './Sidebar';
+import './main.css';
 
 export default function MainPage() {
   const [vistaActiva, setVistaActiva] = useState('perfil');
@@ -31,13 +31,6 @@ export default function MainPage() {
         setVistaActiva={setVistaActiva}
         user={user}
       />
-      <style jsx>{`
-        .main-container {
-          width: 100%;
-          padding: 1.5rem 2rem;
-          background-color: #A294F9;
-        }
-      `}</style>
     </div>
   );
 }

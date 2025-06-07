@@ -1,0 +1,4 @@
+.layout-container {
+  min-height: 100vh;
+  background-color: #A294F9; /* equivalente a bg-gray-100 */
+}

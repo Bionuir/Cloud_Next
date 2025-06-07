@@ -1,6 +1,8 @@
+import './layout.css';
+
 export default function MainLayout({ children }) {
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="layout-container">
       {children}
     </div>
   );

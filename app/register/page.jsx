@@ -4,11 +4,59 @@ import { auth, googleProvider } from '../lib/firebase';
 import { createUserWithEmailAndPassword, signInWithPopup, getIdToken, onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import * as yup from 'yup';
+import './register.css';
 
 const registerSchema = yup.object().shape({
-  nombre: yup.string().trim().required('El nombre es obligatorio'),
-  apellido: yup.string().trim().required('El apellido es obligatorio'),
-  email: yup.string().email('Correo inválido').required('El correo es obligatorio'),
+  nombre: yup
+    .string()
+    .trim()
+    .test('allowed-chars', '', function (value) {
+      if (!value) return true;
+      const forbidden = value.match(/[^\p{L}\p{N}\s]/gu);
+      if (forbidden) {
+        const unique = [...new Set(forbidden)].join(', ');
+        return this.createError({ message: `El nombre contiene caracteres no permitidos: ${unique}` });
+      }
+      return true;
+    })
+    .required('El nombre es obligatorio'),
+  apellido: yup
+    .string()
+    .trim()
+    .test('allowed-chars', '', function (value) {
+      if (!value) return true;
+      const forbidden = value.match(/[^\p{L}\p{N}\s]/gu);
+      if (forbidden) {
+        const unique = [...new Set(forbidden)].join(', ');
+        return this.createError({ message: `El apellido contiene caracteres no permitidos: ${unique}` });
+      }
+      return true;
+    })
+    .required('El apellido es obligatorio'),
+  email: yup
+    .string()
+    .trim()
+    .email('Correo inválido')
+    .test('complete-email', '', function (value) {
+      if (!value) return true;
+      let missing = [];
+      if (!value.includes('@')) {
+        missing.push('la "@"');
+      } else {
+        const [local, domain] = value.split('@');
+        if (!local) missing.push('la parte local');
+        if (!domain) {
+          missing.push('la parte de dominio');
+        } else if (!domain.includes('.')) {
+          missing.push('determina el dominio');
+        }
+      }
+      if (missing.length > 0) {
+        return this.createError({ message: `El correo está incompleto, falta: ${missing.join(', ')}` });
+      }
+      return true;
+    })
+    .required('El correo es obligatorio'),
   password: yup
     .string()
     .transform(value => value === "" ? undefined : value)
@@ -19,7 +67,10 @@ const registerSchema = yup.object().shape({
     .trim()
     .transform(value => value === "" ? undefined : value)
     .notRequired(),
-  sexo: yup.string().oneOf(['masculino', 'femenino', 'otro', ''], 'Valor inválido').notRequired(),
+  sexo: yup
+    .string()
+    .oneOf(['masculino', 'femenino', 'otro', ''], 'Valor inválido')
+    .notRequired(),
   telefono: yup
     .string()
     .transform(value => value === "" ? undefined : value)
@@ -230,132 +281,6 @@ export default function Register() {
           </div>
         </div>
       </div>
-      <style jsx>{`
-        .page {
-          background-color: #A294F9;
-          min-height: 100vh;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 1rem;
-        }
-        .register-card {
-          background-color: #F5EFFF;
-          padding: 24px;
-          border-radius: 1rem;
-          box-shadow: 0 8px 40px rgba(0,0,0,0.4);
-          width: 100%;
-          max-width: 512px;
-        }
-        .register-heading {
-          font-size: 1.5rem;
-          font-weight: 600;
-          color: #2d3748;
-          text-align: center;
-          margin-bottom: 1rem;
-        }
-        .error-box {
-          background-color: #fee2e2;
-          color: #b91c1c;
-          padding: 8px 16px;
-          border-radius: 0.375rem;
-          text-align: center;
-          font-size: 0.875rem;
-          margin-bottom: 1rem;
-        }
-        .form-group {
-          margin-bottom: 1rem;
-        }
-        .form-label {
-          display: block;
-          font-size: 0.875rem;
-          font-weight: 500;
-          color: #4a5568;
-          margin-bottom: 0.5rem;
-        }
-        .form-input {
-          width: 100%;
-          padding: 8px 12px;
-          border: 1px solid #d1d5db;
-          border-radius: 0.375rem;
-          font-size: 1rem;
-        }
-        .flex-row {
-          display: flex;
-          gap: 16px;
-          margin-bottom: 1rem;
-        }
-        .half {
-          flex: 1;
-        }
-        .perfil-save-btn {
-          margin-top: 0.25rem;
-          background-color: #A294F9;
-          color: white;
-          padding: 0.5rem 1rem;
-          border: none;
-          border-radius: 0.5rem;
-          cursor: pointer;
-          transition: background-color 0.3s;
-          width: 100%;
-        }
-        .perfil-save-btn:hover:enabled {
-          background-color: #8A80E2;
-        }
-        .google-btn {
-          margin-top: 1rem;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 0.5rem;
-          background-color: #fff;
-          color: #555;
-          border: 1px solid #ccc;
-          padding: 0.5rem 1rem;
-          border-radius: 0.5rem;
-          cursor: pointer;
-          transition: background-color 0.3s, border 0.3s;
-          width: 100%;
-        }
-        .google-btn:hover {
-          background-color: #f7f7f7;
-          border-color: #aaa;
-        }
-        .google-icon {
-          display: flex;
-          align-items: center;
-        }
-        .or-separator {
-          text-align: center;
-          margin: 1rem 0;
-          color: #718096;
-        }
-        /* New Styles for login button */
-        .login-section {
-          text-align: center;
-          margin-top: 1rem;
-        }
-        .login-btn {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          gap: 0.5rem;
-          border: 1px solid #A294F9;
-          color: #A294F9;
-          background-color: transparent;
-          padding: 0.5rem 1rem;
-          border-radius: 0.5rem;
-          cursor: pointer;
-          transition: background-color 0.3s, color 0.3s;
-          width: 100%;
-          margin-top: 0.5rem;
-        }
-        .login-btn:hover,
-        .login-btn:focus {
-          background-color: #A294F9;
-          color: white;
-        }
-      `}</style>
     </>
   );
 }
