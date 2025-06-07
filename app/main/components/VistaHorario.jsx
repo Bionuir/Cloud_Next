@@ -34,10 +34,10 @@ export default function VistaHorario() {
       return;
     }
 
-    // Mientras no llega la respuesta, podemos mostrar loading=true
+    // mientras no llega la respuesta, mostramos loading=true
     setLoading(true);
 
-    fetch(`http://localhost:3000/api/horario/${googleId}`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/horario/${googleId}`)
       .then(async (res) => {
         const data = await res.json();
         if (!res.ok) {
@@ -111,7 +111,7 @@ export default function VistaHorario() {
     };
 
     try {
-      const response = await fetch('http://localhost:3000/api/horario', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/horario`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
