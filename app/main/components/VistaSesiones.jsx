@@ -45,7 +45,11 @@ export default function VistaSesiones({ user, datosUsuario }) {
       );
       if (!res.ok) throw new Error('Error actualizando sesión');
       const updated = await res.json();
-      setSesiones(s => s.map(x => x.session_id === updated.session_id ? updated : x));
+      setSesiones(s =>
+        nuevoEstado === 'rechazada'
+          ? s.filter(x => x.session_id !== session_id)
+          : s.map(x => x.session_id === updated.session_id ? updated : x)
+      );
     } catch (err) {
       console.error(err);
       alert('No fue posible cambiar el estado');
@@ -82,58 +86,71 @@ export default function VistaSesiones({ user, datosUsuario }) {
   if (error) return <p className="text-red-600">{error}</p>;
   if (sesiones.length === 0) return <p>No hay sesiones.</p>;
 
-  const renderItem = (s) => (
-    <div key={s.session_id} className="sesiones-card">
-      <p><strong>Fecha:</strong> {new Date(s.fecha).toLocaleDateString()}</p>
-      <p>
-        <strong>Hora:</strong>{' '}
-        {new Date(s.hora_inicio).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} –{' '}
-        {new Date(s.hora_final).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-      </p>
-      <p><strong>Duración:</strong> {s.duracion} min</p>
-      <p><strong>Motivo:</strong> {s.motivo || '—'}</p>
-      <p><strong>Estado:</strong> {s.estado}</p>
+  const renderItem = (s) => {
+    // Texto de cabecera según rol
+    let headerText = '';
+    if (datosUsuario.rol === 6) {
+      headerText = `Sesión con el terapeuta ${s.terapeutaName}`;
+    } else if (datosUsuario.rol === 4) {
+      headerText = `Sesión con el paciente ${s.pacienteName}`;
+    } else if (datosUsuario.rol === 1) {
+      headerText = `Sesión entre el terapeuta ${s.terapeutaName} y el/la paciente ${s.pacienteName}`;
+    }
 
-      {s.estado === 'pendiente' && datosUsuario.rol === 4 && (
-        <div className="button-group">
-          <button
-            onClick={() => updateEstado(s.session_id, 'confirmada')}
-            className="btn-confirm"
-          >
-            Confirmar
-          </button>
-          <button
-            onClick={() => updateEstado(s.session_id, 'rechazada')}
-            className="btn-reject"
-          >
-            Rechazar
-          </button>
-        </div>
-      )}
+    return (
+      <div key={s.session_id} className="sesiones-card">
+        <h3 className="sesiones-subheading">{headerText}</h3>
+        <p><strong>Fecha:</strong> {new Date(s.fecha).toLocaleDateString()}</p>
+        <p>
+          <strong>Hora:</strong>{' '}
+          {new Date(s.hora_inicio).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} –{' '}
+          {new Date(s.hora_final).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+        </p>
+        <p><strong>Duración:</strong> {s.duracion} min</p>
+        <p><strong>Motivo:</strong> {s.motivo || '—'}</p>
+        <p><strong>Estado:</strong> {s.estado}</p>
 
-      {s.estado === 'confirmada' && datosUsuario.rol === 4 && (
-        <div className="button-group">
-          <button
-            onClick={() => openDiagnostico(s.session_id)}
-            className="btn-diagnose"
-          >
-            Diagnosticar
-          </button>
-        </div>
-      )}
+        {s.estado === 'pendiente' && datosUsuario.rol === 4 && (
+          <div className="button-group">
+            <button
+              onClick={() => updateEstado(s.session_id, 'confirmada')}
+              className="btn-confirm"
+            >
+              Confirmar
+            </button>
+            <button
+              onClick={() => updateEstado(s.session_id, 'rechazada')}
+              className="btn-reject"
+            >
+              Rechazar
+            </button>
+          </div>
+        )}
 
-      {datosUsuario.rol === 1 && (
-        <div className="button-group">
-          <button
-            onClick={() => eliminarSesion(s.session_id)}
-            className="btn-delete"
-          >
-            Eliminar sesión
-          </button>
-        </div>
-      )}
-    </div>
-  );
+        {s.estado === 'confirmada' && datosUsuario.rol === 4 && (
+          <div className="button-group">
+            <button
+              onClick={() => openDiagnostico(s.session_id)}
+              className="btn-diagnose"
+            >
+              Diagnosticar
+            </button>
+          </div>
+        )}
+
+        {datosUsuario.rol === 1 && (
+          <div className="button-group">
+            <button
+              onClick={() => eliminarSesion(s.session_id)}
+              className="btn-delete"
+            >
+              Eliminar sesión
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className="sesiones-container">
@@ -146,8 +163,6 @@ export default function VistaSesiones({ user, datosUsuario }) {
           onSuccess={onDiagnosticSuccess}
         />
       )}
-      {/* Se usa style jsx global para aplicar los estilos de forma global,
-          igual que en VistaTerapeutas */}
       <style jsx global>{`
         .sesiones-container {
           padding: 1rem;
@@ -159,6 +174,11 @@ export default function VistaSesiones({ user, datosUsuario }) {
           font-weight: bold;
           margin-bottom: 1rem;
           text-align: center;
+        }
+        .sesiones-subheading {
+          font-size: 18px;
+          font-weight: 600;
+          margin-bottom: 0.5rem;
         }
         .sesiones-card {
           background-color: #fff;
@@ -184,30 +204,14 @@ export default function VistaSesiones({ user, datosUsuario }) {
           cursor: pointer;
           transition: background-color 0.3s;
         }
-        .btn-confirm {
-          background-color: #A294F9;
-        }
-        .btn-confirm:hover {
-          background-color: #8A80E2;
-        }
-        .btn-reject {
-          background-color: #f56565;
-        }
-        .btn-reject:hover {
-          background-color: #e53e3e;
-        }
-        .btn-diagnose {
-          background-color: #A294F9;
-        }
-        .btn-diagnose:hover {
-          background-color: #8A80E2;
-        }
-        .btn-delete {
-          background-color: #f56565;
-        }
-        .btn-delete:hover {
-          background-color: #e53e3e;
-        }
+        .btn-confirm { background-color: #A294F9; }
+        .btn-confirm:hover { background-color: #8A80E2; }
+        .btn-reject  { background-color: #f56565; }
+        .btn-reject:hover { background-color: #e53e3e; }
+        .btn-diagnose { background-color: #A294F9; }
+        .btn-diagnose:hover { background-color: #8A80E2; }
+        .btn-delete  { background-color: #f56565; }
+        .btn-delete:hover { background-color: #e53e3e; }
       `}</style>
     </div>
   );
