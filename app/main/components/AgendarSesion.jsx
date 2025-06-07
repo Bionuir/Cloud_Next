@@ -116,8 +116,17 @@ export default function AgendarSesion({ terapeuta, onClose }) {
     setSelectedBlock(null);
   }, [selectedDay, horario, listed]);
 
-  const canSubmit = ids && selectedDay && selectedBlock && fecha && motivo && !submitting;
+  const getTimeRange = (block) => {
+    const start = 7 + block;
+    const end = start + 1;
+    return `${String(start).padStart(2,'0')}:00 - ${String(end).padStart(2,'0')}:00`;
+  };
 
+  // NEW: Split available blocks into morning and afternoon sections
+  const morningBlocks = availableBlocks.filter(bn => bn < 5);
+  const afternoonBlocks = availableBlocks.filter(bn => bn >= 5);
+
+  const canSubmit = ids && selectedDay && selectedBlock && fecha && motivo && !submitting;
   const handleSubmit = async () => {
     if (!canSubmit) return;
     setSubmitting(true);
@@ -161,70 +170,105 @@ export default function AgendarSesion({ terapeuta, onClose }) {
         <h2 className="agendar-sesion-heading">
           Agendar con {terapeuta.nombre} {terapeuta.apellido}
         </h2>
+        <div className="agendar-sesion-main">
+          <div className="agendar-sesion-left">
+            {/* Fecha */}
+            <label className="agendar-sesion-label">
+              Fecha
+              <input
+                type="date"
+                className="agendar-sesion-input"
+                value={fecha}
+                onChange={e => handleFechaChange(e.target.value)}
+              />
+            </label>
 
-        {/* Fecha */}
-        <label className="agendar-sesion-label">
-          Fecha
-          <input
-            type="date"
-            className="agendar-sesion-input"
-            value={fecha}
-            onChange={e => handleFechaChange(e.target.value)}
-          />
-        </label>
-
-        {/* Día (botones) */}
-        <div className="agendar-sesion-day-group">
-          <span className="agendar-sesion-label">Día de la semana</span>
-          <div className="agendar-sesion-day-container">
-            {daysOfWeekLower.map((dl, i) => {
-              const target = getDateForDay(i);
-              return (
-                <button
-                  key={dl}
-                  onClick={() => {
-                    setSelectedDay(dl);
-                    setFecha(formatDate(target));
-                  }}
-                  className={`agendar-sesion-day-btn ${selectedDay === dl ? 'selected' : ''}`}
-                  disabled={!horario?.[dl]?.some(b => b.activado)}
-                >
-                  {daysOfWeek[i]} ({target.getDate()})
-                </button>
-              );
-            })}
+            {/* Día (botones) */}
+            <div className="agendar-sesion-day-group">
+              <span className="agendar-sesion-label">Día de la semana</span>
+              <div className="agendar-sesion-day-container">
+                {daysOfWeekLower.map((dl, i) => {
+                  const target = getDateForDay(i);
+                  return (
+                    <button
+                      key={dl}
+                      onClick={() => {
+                        setSelectedDay(dl);
+                        setFecha(formatDate(target));
+                      }}
+                      className={`agendar-sesion-day-btn ${selectedDay === dl ? 'selected' : ''}`}
+                      disabled={!horario?.[dl]?.some(b => b.activado)}
+                    >
+                      {daysOfWeek[i]} ({target.getDate()})
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+          <div className="agendar-sesion-right">
+            {selectedDay && (
+              <div className="agendar-sesion-block-group">
+                {morningBlocks.length > 0 && (
+                  <div className="morning-blocks">
+                    <span className="agendar-sesion-label">Disponibles por la Mañana</span>
+                    <div className="agendar-sesion-blocks-container">
+                      {morningBlocks.map(bn => (
+                        <div 
+                          key={bn} 
+                          className={`agendar-sesion-block-row ${selectedBlock === bn ? 'selected' : ''}`}
+                          onClick={() => setSelectedBlock(bn)}
+                        >
+                          <div className="agendar-sesion-block-btn">
+                            {bn}
+                          </div>
+                          <div className="block-time">
+                            {getTimeRange(bn)}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {afternoonBlocks.length > 0 && (
+                  <div className="afternoon-blocks">
+                    <span className="agendar-sesion-label">Disponibles por la Tarde</span>
+                    <div className="agendar-sesion-blocks-container">
+                      {afternoonBlocks.map(bn => (
+                        <div 
+                          key={bn} 
+                          className={`agendar-sesion-block-row ${selectedBlock === bn ? 'selected' : ''}`}
+                          onClick={() => setSelectedBlock(bn)}
+                        >
+                          <div className="agendar-sesion-block-btn">
+                            {bn}
+                          </div>
+                          <div className="block-time">
+                            {getTimeRange(bn)}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Bloque */}
-        {selectedDay && (
-          <div className="agendar-sesion-block-group">
-            <span className="agendar-sesion-label">Bloques disponibles</span>
-            <div className="agendar-sesion-block-container">
-              {availableBlocks.map(bn => (
-                <button
-                  key={bn}
-                  onClick={() => setSelectedBlock(bn)}
-                  className={`agendar-sesion-block-btn ${selectedBlock === bn ? 'selected' : ''}`}
-                >
-                  {bn}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Motivo */}
-        <label className="agendar-sesion-label">
-          Motivo
-          <textarea
-            className="agendar-sesion-textarea"
-            rows="3"
-            value={motivo}
-            onChange={e => setMotivo(e.target.value)}
-            placeholder="Escriba aqui su motivo de su Agenda"
-          />
-        </label>
+        {/* Motivo en el centro abajo */}
+        <div className="agendar-sesion-motivo-container">
+          <label className="agendar-sesion-label">
+            Motivo
+            <textarea
+              className="agendar-sesion-textarea"
+              rows="3"
+              value={motivo}
+              onChange={e => setMotivo(e.target.value)}
+              placeholder="Escriba aqui su motivo de su Agenda"
+            />
+          </label>
+        </div>
 
         {/* Botones */}
         <div className="agendar-sesion-btn-container">
@@ -255,9 +299,6 @@ export default function AgendarSesion({ terapeuta, onClose }) {
         .agendar-sesion-day-btn:hover {
           background-color: #CDC1FF;
         }
-        .agendar-sesion-block-btn:hover {
-          background-color: #CDC1FF;
-        }
         .agendar-sesion-button:hover {
           background-color: #CDC1FF;
           color: #fff;
@@ -282,7 +323,7 @@ export default function AgendarSesion({ terapeuta, onClose }) {
           padding: 1.5rem;
           border-radius: 0.75rem;
           width: 90%;
-          max-width: 28rem;
+          max-width: 50rem;
         }
         .agendar-sesion-box > * + * {
           margin-top: 1rem;
@@ -306,12 +347,22 @@ export default function AgendarSesion({ terapeuta, onClose }) {
           border-radius: 0.25rem;
           box-sizing: border-box;
         }
+        .agendar-sesion-main {
+          display: flex;
+          gap: 1rem;
+          margin-top: 1rem;
+        }
+        .agendar-sesion-left,
+        .agendar-sesion-right {
+          flex: 1;
+        }
         .agendar-sesion-day-container,
-        .agendar-sesion-block-container,
+        .agendar-sesion-blocks-container,
         .agendar-sesion-btn-container {
           display: flex;
           flex-wrap: wrap;
           gap: 0.5rem;
+          
         }
         .agendar-sesion-day-btn {
           padding: 0.5rem 0.75rem;
@@ -328,20 +379,47 @@ export default function AgendarSesion({ terapeuta, onClose }) {
           cursor: not-allowed;
           opacity: 0.5;
         }
-        .agendar-sesion-block-btn {
-          width: 3rem;
-          height: 2rem;
-          border-radius: 0.25rem;
-          background-color: #E5D9F2;
-          cursor: pointer;
+        .agendar-sesion-block-group {
+          margin-top: 1rem;
         }
-        .agendar-sesion-block-btn.selected {
+        .agendar-sesion-blocks-container {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+          margin-top: 0.5rem;
+          
+        }
+        
+        .agendar-sesion-block-row {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          padding: 0.3rem;
+          background-color: #E5D9F2;
+          border-radius: 0.25rem;
+          cursor: pointer;
+          transition: background-color 0.3s ease, color 0.3s ease !important;
+          width: 100%;
+        }
+        /* Instead of applying hover only on the button, now the entire row changes style */
+        .agendar-sesion-block-row:hover {
+          background-color: #CDC1FF;
+        }
+        .agendar-sesion-block-row.selected {
           background-color: #A294F9;
           color: #fff;
         }
-        .agendar-sesion-block-btn.disabled {
-          background-color: #d1d5db;
-          cursor: not-allowed;
+        .agendar-sesion-block-btn {
+          width: 3rem;
+          text-align: center;
+          font-weight: bold;
+        }
+        .block-time {
+          font-weight: 500;
+        }
+        .agendar-sesion-motivo-container {
+          margin-top: 1rem;
+          text-align: center;
         }
         .agendar-sesion-button {
           padding: 0.5rem 1rem;
@@ -361,6 +439,27 @@ export default function AgendarSesion({ terapeuta, onClose }) {
         .agendar-sesion-button:disabled {
           opacity: 0.5;
           cursor: not-allowed;
+        }
+        .morning-blocks {
+          margin-bottom: 1rem; // added small padding between morning and afternoon sections
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes fadeOut {
+          from { opacity: 1; }
+          to { opacity: 0; }
+        }
+        /* Apply fade animation on mount and when items change */
+        .agendar-sesion-blocks-container > .agendar-sesion-block-row {
+          animation: fadeIn 0.3s ease;
+          transition: opacity 0.10s ease;
+        }
+        /* When an element is removed or its content changes, add the "fade-out" class via JS to trigger fadeOut */
+        .fade-out {
+          animation: fadeOut 1.3s ease;
+          opacity: 0;
         }
       `}</style>
     </div>

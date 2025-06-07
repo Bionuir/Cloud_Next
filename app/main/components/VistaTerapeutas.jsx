@@ -87,7 +87,7 @@ export default function VistaTerapeutas() {
           }
         }
         .terapeuta-card {
-          background-color: #fff;
+          background-color: #F5EFFF;
           box-shadow: 0 4px 8px rgba(0,0,0,0.2);
           padding: 1rem;
           border-radius: 1rem;
