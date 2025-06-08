@@ -17,22 +17,22 @@ export default function Sidebar({ vistaActiva, setVistaActiva, user }) {
   const [datosUsuario, setDatosUsuario] = useState(null);
   const router = useRouter();
 
+  const obtenerDatos = async () => {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/profile/${user.uid}`);
+      if (!res.ok) throw new Error('No se pudo obtener el usuario');
+
+      const data = await res.json();
+      console.log('Datos del usuario cargados en Sidebar:', data);
+      setDatosUsuario(data);
+    } catch (error) {
+      console.error('Error al obtener datos del backend:', error);
+      setTimeout(obtenerDatos, 1000); // Reintentar en 1 segundo
+    }
+  };
+
   useEffect(() => {
     if (!user?.uid) return;
-
-    const obtenerDatos = async () => {
-      try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/profile/${user.uid}`);
-        if (!res.ok) throw new Error('No se pudo obtener el usuario');
-
-        const data = await res.json();
-        console.log('Datos del usuario cargados en Sidebar:', data);
-        setDatosUsuario(data);
-      } catch (error) {
-        console.error('Error al obtener datos del backend:', error);
-        setTimeout(obtenerDatos, 1000); // Reintentar en 1 segundo
-      }
-    };
 
     obtenerDatos();
   }, [user]);
@@ -108,7 +108,7 @@ export default function Sidebar({ vistaActiva, setVistaActiva, user }) {
 
         <section className="sidebar-content">
           {vistaActiva === 'tiposterapeuta' && <VistaTiposTerapeuta />}
-          {vistaActiva === 'perfil' && <VistaPerfil user={user} datosUsuario={datosUsuario} />}
+          {vistaActiva === 'perfil' && <VistaPerfil user={user} datosUsuario={datosUsuario} refreshUser={obtenerDatos} />}
           {vistaActiva === 'usuarios' && isAdmin && <VistaUsuarios datosUsuario={datosUsuario} />}
           {vistaActiva === 'historial' && isTerapeuta && <VistaHistorial />}
           {vistaActiva === 'sesiones' && <VistaSesiones user={user} datosUsuario={datosUsuario} />}
