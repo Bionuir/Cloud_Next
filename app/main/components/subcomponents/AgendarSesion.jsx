@@ -300,7 +300,7 @@ export default function AgendarSesion({ terapeuta, onClose }) {
           background-color: #CDC1FF;
         }
         .agendar-sesion-button:hover {
-          background-color: #CDC1FF;
+          background-color: #8A80E2;
           color: #fff;
         }
         .cancel-btn:hover {
@@ -380,7 +380,7 @@ export default function AgendarSesion({ terapeuta, onClose }) {
           opacity: 0.5;
         }
         .agendar-sesion-block-group {
-          margin-top: 1rem;
+          margin-top: 0rem;
         }
         .agendar-sesion-blocks-container {
           display: flex;

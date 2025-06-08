@@ -20,6 +20,9 @@ export default function PopupDiagnostico({ sessionId, onClose, onSuccess }) {
     setForm(prev => ({ ...prev, [name]: sanitizedValue }));
   };
 
+  // Nueva variable para validar que todas las casillas tengan contenido
+  const isFormValid = Object.values(form).every(value => value.trim() !== '');
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -127,7 +130,7 @@ export default function PopupDiagnostico({ sessionId, onClose, onSuccess }) {
             </button>
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || !isFormValid}
               className="agendar-sesion-button submit-btn"
             >
               {loading ? 'Subiendo...' : 'Subir diagnóstico'}
@@ -209,9 +212,17 @@ export default function PopupDiagnostico({ sessionId, onClose, onSuccess }) {
           background-color: #A294F9;
           color: #fff;
           border: none;
+          transition: opacity 0.3s ease; /* added fade transition */
         }
         .submit-btn:hover {
-          background-color: #CDC1FF;
+          background-color: #8A80E2;
+          color: #fff;
+        }
+        /* Nueva regla para mostrar el botón como desactivado */
+        .submit-btn:disabled {
+          cursor: not-allowed;
+          opacity: 0.5;
+          transition: opacity 0.3s ease; /* ensure fade effect on state change */
         }
         .error-text {
           color: red;

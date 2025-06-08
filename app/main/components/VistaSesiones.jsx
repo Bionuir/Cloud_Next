@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import PopupDiagnostico from './PopupDiagnostico';
+import PopupDiagnostico from './subcomponents/PopupDiagnostico';
 
 export default function VistaSesiones({ user, datosUsuario }) {
   const [sesiones, setSesiones] = useState([]);
@@ -91,6 +91,7 @@ export default function VistaSesiones({ user, datosUsuario }) {
   const onDiagnosticSuccess = () => {
     setShowPopup(false);
     alert('Diagnóstico guardado correctamente');
+    fetchSesiones();
   };
 
   if (loading) return <p>Cargando sesiones...</p>;

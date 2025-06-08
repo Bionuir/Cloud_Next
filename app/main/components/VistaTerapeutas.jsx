@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import AgendarSesion from './AgendarSesion'; // Ajusta el path si es necesario
+import AgendarSesion from './subcomponents/AgendarSesion'; // Ajusta el path si es necesario
 
 export default function VistaTerapeutas() {
   const [terapeutas, setTerapeutas] = useState([]);
