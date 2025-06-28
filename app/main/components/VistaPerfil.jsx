@@ -16,7 +16,7 @@ export default function VistaPerfil({ user, datosUsuario, refreshUser }) {
 	const handleLogout = async () => {
 		try {
 			await signOut(auth);
-			router.push('/login');
+			router.push('/main');
 		} catch (error) {
 			console.error('[VistaPerfil] Error al cerrar sesión:', error);
 		}

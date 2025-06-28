@@ -5,6 +5,7 @@
   background-color: rgb(255, 255, 255);
   height: calc(100vh - 3rem);
   border-radius: 1rem;
+  view-transition-name: fade-in;
 }
 .sidebar-aside {
   width: 288px;
@@ -66,4 +67,15 @@
   width: 70%;
   border-radius: 20px;
   margin: 0 auto;
+}
+
+@view-transition {
+	name: fade-in;
+	duration: 2000ms;
+	timing-function: ease-in-out;
+}
+
+@view-transition-keyframes fade-in {
+	from { opacity: 0; }
+	to   { opacity: 1; }
 }

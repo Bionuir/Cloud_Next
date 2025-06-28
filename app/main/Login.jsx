@@ -1,8 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { auth, googleProvider } from '../lib/firebase';
-import { signInWithEmailAndPassword, signInWithPopup, getIdToken, onAuthStateChanged } from 'firebase/auth';
-import { useRouter } from 'next/navigation';
+import { signInWithEmailAndPassword, signInWithPopup, getIdToken } from 'firebase/auth';
 import * as yup from 'yup';
 import './login.css';
 
@@ -11,24 +10,13 @@ const loginSchema = yup.object().shape({
   password: yup.string().required('La contraseña es obligatoria'),
 });
 
-export default function Login() {
+export default function Login({ onRegisterClick }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [failedAttempts, setFailedAttempts] = useState(0);
   const [cooldownActive, setCooldownActive] = useState(false);
   const [cooldownTimeLeft, setCooldownTimeLeft] = useState(0);
-  const router = useRouter();
-
-  // Add session check
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        router.push('/main');
-      }
-    });
-    return unsubscribe;
-  }, []);
 
   useEffect(() => {
     const cooldownExpiration = localStorage.getItem('cooldownExpiration');
@@ -79,7 +67,6 @@ export default function Login() {
       localStorage.removeItem('cooldownExpiration');
       localStorage.removeItem('failedAttempts');
       localStorage.removeItem('lastFailure');
-      router.push('/main');
     } catch (err) {
       if (err.name === 'ValidationError') {
         setError(err.errors[0]);
@@ -144,7 +131,6 @@ export default function Login() {
         })
       });
       setFailedAttempts(0);
-      router.push('/main');
     } catch (err) {
       if (err.code === 'auth/popup-closed-by-user' || err.code === 'auth/cancelled-popup-request') {
         console.log('loginpopup cerrado');
@@ -204,12 +190,11 @@ export default function Login() {
           {/* New registration section */}
           <div className="register-section">
             <p>¿Aun no tienes cuenta?</p>
-            <button className="register-btn" onClick={() => router.push('/register')}>
+            <button className="register-btn" onClick={onRegisterClick}>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-5">
   <path fillRule="evenodd" d="M4.25 5.5a.75.75 0 0 0-.75.75v8.5c0 .414.336.75.75.75h8.5a.75.75 0 0 0 .75-.75v-4a.75.75 0 0 1 1.5 0v4A2.25 2.25 0 0 1 12.75 17h-8.5A2.25 2.25 0 0 1 2 14.75v-8.5A2.25 2.25 0 0 1 4.25 4h5a.75.75 0 0 1 0 1.5h-5Z" clipRule="evenodd" />
   <path fillRule="evenodd" d="M6.194 12.753a.75.75 0 0 0 1.06.053L16.5 4.44v2.81a.75.75 0 0 0 1.5 0v-4.5a.75.75 0 0 0-.75-.75h-4.5a.75.75 0 0 0 0 1.5h2.553l-9.056 8.194a.75.75 0 0 0-.053 1.06Z" clipRule="evenodd" />
 </svg>
-
 
               Registrarse
             </button>

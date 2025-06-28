@@ -1,10 +1,10 @@
 .page {
-  background-color: #A294F9;
-  min-height: 100vh;
+  min-height: calc(100vh - 3rem);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
+  opacity: 0;
+  animation: fadeIn 0.5s ease-in forwards;
 }
 .register-card {
   background-color: #F5EFFF;
@@ -121,4 +121,9 @@
 .login-btn:focus {
   background-color: #A294F9;
   color: white;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }

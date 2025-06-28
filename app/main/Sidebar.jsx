@@ -44,6 +44,15 @@ export default function Sidebar({ vistaActiva, setVistaActiva, user }) {
     obtenerDatos();
   }, [user]);
 
+  // Dispara la transición view-transition en el montaje
+  useEffect(() => {
+    if (document.startViewTransition) {
+      document.startViewTransition(() => {
+        // no hay DOM changes aquí, solo queremos la animación del montaje
+      });
+    }
+  }, []);
+
   const isAdmin = datosUsuario?.rol === 1;
   const isTerapeuta = datosUsuario?.rol === 4;
 
