@@ -1,1 +1,10 @@
 @import "tailwindcss";
+
+:root {
+  --md-sys-color-primary: #6750A4;
+  --md-sys-color-on-primary: #ffffff;
+  --md-sys-color-secondary: #625b71;
+  --md-sys-color-on-secondary: #ffffff;
+  --md-sys-color-surface: #fef7ff;
+  --md-sys-color-on-surface: #1c1b1f;
+}

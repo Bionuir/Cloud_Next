@@ -27,6 +27,27 @@ export default function VistaTerapeutas() {
     fetchTerapeutas();
   }, []);
 
+  // Helper to use View Transitions API when available
+  const wrapTransition = (updateFn) => {
+    if (document.startViewTransition) document.startViewTransition(updateFn);
+    else updateFn();
+  };
+
+  // Open modal with transition
+  const handleOpen = (t) => {
+    wrapTransition(() => {
+      setTerapeutaSeleccionado(t);
+      setShowModal(true);
+    });
+  };
+
+  // Close modal with transition
+  const handleClose = () => {
+    wrapTransition(() => {
+      setShowModal(false);
+    });
+  };
+
   if (loading) return <p className="terapeuta-loading">Cargando terapeutas...</p>;
   if (terapeutas.length === 0) return <p className="terapeuta-empty">No hay terapeutas registrados.</p>;
 
@@ -41,10 +62,7 @@ export default function VistaTerapeutas() {
             <p className="terapeuta-card-phone">📞 {t.telefono || 'No registrado'}</p>
             <p className="terapeuta-card-type">🧩 Tipo: {t.tipo_terapeuta || 'No asignado'}</p>
             <button
-              onClick={() => {
-                setTerapeutaSeleccionado(t);
-                setShowModal(true);
-              }}
+              onClick={() => handleOpen(t)}
               className="terapeuta-btn"
             >
               Agendar sesión
@@ -57,7 +75,7 @@ export default function VistaTerapeutas() {
       {showModal && terapeutaSeleccionado && (
         <AgendarSesion
           terapeuta={terapeutaSeleccionado}
-          onClose={() => setShowModal(false)}
+          onClose={handleClose}
         />
       )}
 
