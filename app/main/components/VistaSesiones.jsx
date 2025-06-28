@@ -94,7 +94,7 @@ export default function VistaSesiones({ user, datosUsuario }) {
     fetchSesiones();
   };
 
-  if (loading) return <p>Cargando sesiones...</p>;
+  if (loading) return <p></p>;
   if (error) return <p className="text-red-600">{error}</p>;
   if (sesiones.length === 0) return <p>No hay sesiones.</p>;
 

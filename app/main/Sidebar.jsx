@@ -2,6 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import HomeIcon from '@mui/icons-material/Home';
+import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
+import PeopleIcon from '@mui/icons-material/People';
+import EventIcon from '@mui/icons-material/Event';
+import LightbulbIcon from '@mui/icons-material/Lightbulb';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import PersonIcon from '@mui/icons-material/Person';
 
 import VistaTiposTerapeuta from './components/VistaTiposTerapeuta';
 import VistaPerfil from './components/VistaPerfil';
@@ -40,26 +47,28 @@ export default function Sidebar({ vistaActiva, setVistaActiva, user }) {
   const isAdmin = datosUsuario?.rol === 1;
   const isTerapeuta = datosUsuario?.rol === 4;
 
-  if (!datosUsuario) return <p>Cargando datos del usuario...</p>;
+  if (!datosUsuario) return <p></p>;
 
   return (
     <>
       <div className="sidebar-container">
         <aside className="sidebar-aside">
-          <h2 className="sidebar-title">CLINOVA</h2>
+          <h2 className="sidebar-title" style={{display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem'}}>
+            <img src="/clinova_web.webp" alt="Clinova Logo" style={{width: 100, height: 100, borderRadius: 20}} />
+          </h2>
           <ul className="sidebar-list">
             <li>
               <div className="sidebar-menu-item">
                 <button onClick={() => setVistaActiva('tiposterapeuta')}
                   className={vistaActiva === 'tiposterapeuta' ? 'active' : ''}
-                >🏠 Tipos de Terapeuta</button>
+                ><HomeIcon style={{verticalAlign: 'middle', marginRight: 8}} /> Tipos de Terapeuta</button>
               </div>
             </li>
             <li>
               <div className="sidebar-menu-item">
                 <button onClick={() => setVistaActiva('terapeutas')}
                   className={vistaActiva === 'terapeutas' ? 'active' : ''}
-                >👩‍⚕️ Terapeutas</button>
+                ><LocalHospitalIcon style={{verticalAlign: 'middle', marginRight: 8}} /> Terapeutas</button>
               </div>
             </li>
             {isAdmin && (
@@ -67,7 +76,7 @@ export default function Sidebar({ vistaActiva, setVistaActiva, user }) {
                 <div className="sidebar-menu-item">
                   <button onClick={() => setVistaActiva('usuarios')}
                     className={vistaActiva === 'usuarios' ? 'active' : ''}
-                  >🧑‍💼 Usuarios</button>
+                  ><PeopleIcon style={{verticalAlign: 'middle', marginRight: 8}} /> Usuarios</button>
                 </div>
               </li>
             )}
@@ -75,7 +84,7 @@ export default function Sidebar({ vistaActiva, setVistaActiva, user }) {
               <div className="sidebar-menu-item">
                 <button onClick={() => setVistaActiva('sesiones')}
                   className={vistaActiva === 'sesiones' ? 'active' : ''}
-                >🗓️ Sesiones</button>
+                ><EventIcon style={{verticalAlign: 'middle', marginRight: 8}} /> Sesiones</button>
               </div>
             </li>
             {datosUsuario?.rol === 6 && (
@@ -83,7 +92,7 @@ export default function Sidebar({ vistaActiva, setVistaActiva, user }) {
                 <div className="sidebar-menu-item">
                   <button onClick={() => setVistaActiva('diagnostico')}
                     className={vistaActiva === 'diagnostico' ? 'active' : ''}
-                  >💡 Diagnóstico</button>
+                  ><LightbulbIcon style={{verticalAlign: 'middle', marginRight: 8}} /> Diagnóstico</button>
                 </div>
               </li>
             )}
@@ -92,15 +101,17 @@ export default function Sidebar({ vistaActiva, setVistaActiva, user }) {
                 <div className="sidebar-menu-item">
                   <button onClick={() => setVistaActiva('horario')}
                     className={vistaActiva === 'horario' ? 'active' : ''}
-                  >🕒 Horario</button>
+                  ><AccessTimeIcon style={{verticalAlign: 'middle', marginRight: 8}} /> Horario</button>
                 </div>
               </li>
             )}
+            <li className="sidebar-divider">
+            </li>
             <li>
               <div className="sidebar-menu-item">
                 <button onClick={() => setVistaActiva('perfil')}
                   className={vistaActiva === 'perfil' ? 'active' : ''}
-                >👤 Perfil</button>
+                ><PersonIcon style={{verticalAlign: 'middle', marginRight: 8}} /> Perfil</button>
               </div>
             </li>
           </ul>

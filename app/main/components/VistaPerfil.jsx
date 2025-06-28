@@ -22,9 +22,19 @@ export default function VistaPerfil({ user, datosUsuario, refreshUser }) {
 		}
 	};
 
-	if (!datosUsuario) return <p>Cargando perfil...</p>;
+	if (!datosUsuario) return <p></p>;
 
 	const mostrarDato = (v) => (v || 'No establecido');
+
+	const openPopup = () => {
+		document.startViewTransition(() => setShowPopup(true));
+	};
+	const closePopup = () => {
+		document.startViewTransition(() => {
+			setShowPopup(false);
+			refreshUser();
+		});
+	};
 
 	return (
 		<div className="perfil-container">
@@ -39,7 +49,7 @@ export default function VistaPerfil({ user, datosUsuario, refreshUser }) {
 
 				{/* Botón para editar toda la información */}
 				<button
-					onClick={() => setShowPopup(true)}
+					onClick={openPopup}
 					className="perfil-edit-btn"
 				>
 					Editar información
@@ -57,10 +67,7 @@ export default function VistaPerfil({ user, datosUsuario, refreshUser }) {
 				<PopupEditarUsuario
 					datosUsuario={datosUsuario}
 					user={user}
-					onClose={() => {
-						setShowPopup(false);
-						refreshUser(); // vuelve a obtener los datos en Sidebar
-					}}
+					onClose={closePopup}
 				/>
 			)}
 

@@ -134,7 +134,7 @@ export default function VistaHorario() {
 
   // Si aún estamos cargando el GET inicial, podemos mostrar un mensaje (o spinner)
   if (loading) {
-    return <div>Cargando horario...</div>;
+    return <div></div>;
   }
 
   return (

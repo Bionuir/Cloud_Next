@@ -25,6 +25,15 @@ export default function PopupEditarUsuario({ datosUsuario, user, onClose }) {
 		}
 	}, [datosUsuario.rol]);
 
+	// Función para cerrar con view transition
+	const handleClose = () => {
+		if (document.startViewTransition) {
+			document.startViewTransition(() => onClose());
+		} else {
+			onClose();
+		}
+	};
+
 	const handleSave = async () => {
 		setLoading(true);
 		setMsg('');
@@ -76,7 +85,12 @@ export default function PopupEditarUsuario({ datosUsuario, user, onClose }) {
 			}
 
 			setMsg('Usuario actualizado correctamente');
-			onClose(); // Cerrar popup
+			// Envolver cierre de popup en view transition
+			if (document.startViewTransition) {
+				document.startViewTransition(() => onClose());
+			} else {
+				onClose();
+			}
 		} catch (error) {
 			console.error('[PopupEditarUsuario] Error al actualizar usuario:', error);
 			setMsg('No se pudo actualizar. Revisa la consola.');
@@ -162,7 +176,7 @@ export default function PopupEditarUsuario({ datosUsuario, user, onClose }) {
 					)}
 
 					<div className="popup-actions">
-						<button type="button" onClick={onClose} disabled={loading}>Cancelar</button>
+						<button type="button" onClick={handleClose} disabled={loading}>Cancelar</button>
 						<button type="submit" disabled={loading || !isChanged} style={{ opacity: loading || !isChanged ? 0.5 : 1 }}>
 							{loading ? 'Guardando...' : 'Guardar'}
 						</button>
@@ -171,80 +185,85 @@ export default function PopupEditarUsuario({ datosUsuario, user, onClose }) {
 				</form>
 			</div>
 			<style jsx>{`
-	.popup-overlay {
-		position: fixed;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		background-color: rgba(0,0,0,0.5);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-	.popup-container {
-		background-color: #F5EFFF;
-		padding: 1.5rem;
-		border-radius: 0.75rem;
-		width: 90%;
-		max-width: 50rem;
-		animation: fadeIn 0.3s ease;
-	}
-	h2 {
-		font-size: 1.25rem;
-		font-weight: 600;
-		margin: 0;
-	}
-	form {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-	}
-	label {
-		display: block;
-		font-weight: 500;
-	}
-	input, select, textarea {
-		background-color: #E5D9F2;
-		width: 100%;
-		margin-top: 0.25rem;
-		padding: 0.5rem;
-		border-radius: 0.25rem;
-		border: 1px solid #ccc;
-		box-sizing: border-box;
-	}
-		input:disabled {
-			opacity: 0.5;
-			cursor: not-allowed;
-		}
-	.popup-actions {
-		display: flex;
-		justify-content: flex-end;
-		gap: 0.5rem;
-		margin-top: 1rem;
-	}
-	button {
-		padding: 0.5rem 1rem;
-		border-radius: 0.5rem;
-		cursor: pointer;
-		background-color: #fff;
-		border: 1px solid #ccc;
-		transition: background-color 0.3s ease, color 0.3s ease;
-	}
-	button[type="submit"] {
-		background-color: #A294F9;
-		color: #fff;
-		border: none;
-	}
-	button:hover {
-		background-color: #8A80E2;
-		color: #fff;
-	}
-	@keyframes fadeIn {
-		from { opacity: 0; }
-		to { opacity: 1; }
-	}
-`}</style>
+				.popup-overlay, .popup-container {
+					view-transition-name: popup;
+					view-transition-duration: 300ms;
+					view-transition-timing-function: ease;
+				}
+				.popup-overlay {
+					position: fixed;
+					top: 0;
+					left: 0;
+					right: 0;
+					bottom: 0;
+					background-color: rgba(0,0,0,0.5);
+					display: flex;
+					align-items: center;
+					justify-content: center;
+				}
+				.popup-container {
+					background-color: #F5EFFF;
+					padding: 1.5rem;
+					border-radius: 0.75rem;
+					width: 90%;
+					max-width: 50rem;
+					animation: fadeIn 0.3s ease;
+				}
+				h2 {
+					font-size: 1.25rem;
+					font-weight: 600;
+					margin: 0;
+				}
+				form {
+					display: flex;
+					flex-direction: column;
+					gap: 0.5rem;
+				}
+				label {
+					display: block;
+					font-weight: 500;
+				}
+				input, select, textarea {
+					background-color: #E5D9F2;
+					width: 100%;
+					margin-top: 0.25rem;
+					padding: 0.5rem;
+					border-radius: 0.25rem;
+					border: 1px solid #ccc;
+					box-sizing: border-box;
+				}
+					input:disabled {
+						opacity: 0.5;
+						cursor: not-allowed;
+					}
+				.popup-actions {
+					display: flex;
+					justify-content: flex-end;
+					gap: 0.5rem;
+					margin-top: 1rem;
+				}
+				button {
+					padding: 0.5rem 1rem;
+					border-radius: 0.5rem;
+					cursor: pointer;
+					background-color: #fff;
+					border: 1px solid #ccc;
+					transition: background-color 0.3s ease, color 0.3s ease;
+				}
+				button[type="submit"] {
+					background-color: #A294F9;
+					color: #fff;
+					border: none;
+				}
+				button:hover {
+					background-color: #8A80E2;
+					color: #fff;
+				}
+				@keyframes fadeIn {
+					from { opacity: 0; }
+					to { opacity: 1; }
+				}
+			`}</style>
 		</div>
 	);
 }

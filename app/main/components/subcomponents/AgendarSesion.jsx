@@ -199,7 +199,9 @@ export default function AgendarSesion({ terapeuta, onClose }) {
                       className={`agendar-sesion-day-btn ${selectedDay === dl ? 'selected' : ''}`}
                       disabled={!horario?.[dl]?.some(b => b.activado)}
                     >
-                      {daysOfWeek[i]} ({target.getDate()})
+                      <span className="day-text">{daysOfWeek[i]}</span>
+                      <span className="day-divider" />
+                      <span className="day-number">{target.getDate()}</span>
                     </button>
                   );
                 })}
@@ -222,6 +224,7 @@ export default function AgendarSesion({ terapeuta, onClose }) {
                           <div className="agendar-sesion-block-btn">
                             {bn}
                           </div>
+                          <span className="block-divider" />
                           <div className="block-time">
                             {getTimeRange(bn)}
                           </div>
@@ -243,6 +246,7 @@ export default function AgendarSesion({ terapeuta, onClose }) {
                           <div className="agendar-sesion-block-btn">
                             {bn}
                           </div>
+                          <span className="block-divider" />
                           <div className="block-time">
                             {getTimeRange(bn)}
                           </div>
@@ -334,6 +338,7 @@ export default function AgendarSesion({ terapeuta, onClose }) {
           margin: 0;
         }
         .agendar-sesion-label {
+          
           display: block;
           font-weight: 500;
         }
@@ -369,6 +374,24 @@ export default function AgendarSesion({ terapeuta, onClose }) {
           border-radius: 0.25rem;
           background-color: #E5D9F2;
           cursor: pointer;
+          display: flex;
+          align-items: center;
+          gap: 0.2rem;
+        }
+        .day-text {
+          // opcional: estilos para el texto del día
+        }
+        .day-divider {
+          display: inline-block;
+          width: 3px;
+          height: 20px;
+          background: rgba(255, 255, 255, 0.3);
+          margin: 0 0.3rem;
+          align-self: center;
+          border-radius: 10px;
+        }
+        .day-number {
+          // opcional: estilos para el número del día
         }
         .agendar-sesion-day-btn.selected {
           background-color: #A294F9;
@@ -393,7 +416,7 @@ export default function AgendarSesion({ terapeuta, onClose }) {
         .agendar-sesion-block-row {
           display: flex;
           align-items: center;
-          gap: 1rem;
+          gap: 0.2rem;
           padding: 0.3rem;
           background-color: #E5D9F2;
           border-radius: 0.25rem;
@@ -414,12 +437,22 @@ export default function AgendarSesion({ terapeuta, onClose }) {
           text-align: center;
           font-weight: bold;
         }
+        .block-divider {
+          display: inline-block;
+          width: 2px;
+          height: 90%;
+          min-height: 20px;
+          background: rgba(255, 255, 255, 0.3);
+          margin: 0 0.3rem;
+          align-self: center;
+          border-radius: 1px;
+        }
         .block-time {
           font-weight: 500;
         }
         .agendar-sesion-motivo-container {
           margin-top: 1rem;
-          text-align: center;
+          text-align: left;
         }
         .agendar-sesion-button {
           padding: 0.5rem 1rem;

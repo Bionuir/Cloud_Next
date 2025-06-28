@@ -9,6 +9,8 @@ export default function VistaTerapeutas() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [terapeutaSeleccionado, setTerapeutaSeleccionado] = useState(null);
+  const [search, setSearch] = useState('');
+  const [tipoFiltro, setTipoFiltro] = useState('todos');
 
   useEffect(() => {
     const fetchTerapeutas = async () => {
@@ -26,6 +28,18 @@ export default function VistaTerapeutas() {
 
     fetchTerapeutas();
   }, []);
+
+  // Obtener tipos únicos de terapeuta
+  const tiposUnicos = [
+    ...new Set(terapeutas.map(t => t.tipo_terapeuta).filter(Boolean))
+  ];
+
+  // Filtrado por nombre y tipo
+  const terapeutasFiltrados = terapeutas.filter(t => {
+    const coincideNombre = `${t.nombre} ${t.apellido}`.toLowerCase().includes(search.toLowerCase());
+    const coincideTipo = tipoFiltro === 'todos' || t.tipo_terapeuta === tipoFiltro;
+    return coincideNombre && coincideTipo;
+  });
 
   // Helper to use View Transitions API when available
   const wrapTransition = (updateFn) => {
@@ -48,14 +62,33 @@ export default function VistaTerapeutas() {
     });
   };
 
-  if (loading) return <p className="terapeuta-loading">Cargando terapeutas...</p>;
+  if (loading) return <p className="terapeuta-loading"></p>;
   if (terapeutas.length === 0) return <p className="terapeuta-empty">No hay terapeutas registrados.</p>;
 
   return (
     <div className="terapeuta-container">
       <h2 className="terapeuta-heading">Lista de Terapeutas</h2>
+      <div className="terapeuta-filtros">
+        <input
+          type="text"
+          className="terapeuta-busqueda"
+          placeholder="Buscar por nombre..."
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+        />
+        <select
+          className="terapeuta-select"
+          value={tipoFiltro}
+          onChange={e => setTipoFiltro(e.target.value)}
+        >
+          <option value="todos">Todos los tipos</option>
+          {tiposUnicos.map(tipo => (
+            <option key={tipo} value={tipo}>{tipo}</option>
+          ))}
+        </select>
+      </div>
       <div className="terapeuta-grid">
-        {terapeutas.map((t) => (
+        {terapeutasFiltrados.map((t) => (
           <div key={t._id} className="terapeuta-card">
             <h3 className="terapeuta-card-title">{t.nombre} {t.apellido}</h3>
             <p className="terapeuta-card-email">{t.correo}</p>
@@ -87,7 +120,29 @@ export default function VistaTerapeutas() {
           font-size: 24px;
           font-weight: bold;
           margin-bottom: 1rem;
-          text-align: center;
+          text-align: left;
+        }
+        .terapeuta-filtros {
+          display: flex;
+          gap: 1rem;
+          margin-bottom: 1.5rem;
+          flex-wrap: wrap;
+        }
+        .terapeuta-busqueda {
+          flex: 1 1 200px;
+          padding: 0.5rem;
+          border-radius: 0.5rem;
+          border: 1px solid #ccc;
+          font-size: 1rem;
+          background: #fff;
+        }
+        .terapeuta-select {
+          flex: 0 0 200px;
+          padding: 0.5rem;
+          border-radius: 0.5rem;
+          border: 1px solid #ccc;
+          font-size: 1rem;
+          background: #fff;
         }
         .terapeuta-grid {
           display: grid;

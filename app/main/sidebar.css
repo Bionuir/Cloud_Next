@@ -1,14 +1,14 @@
 .sidebar-container {
   display: flex;
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
   overflow: hidden;
-  background-color: #ffffff;
+  background-color: rgb(255, 255, 255);
   height: calc(100vh - 3rem);
   border-radius: 1rem;
 }
 .sidebar-aside {
   width: 288px;
-  background-color: #ffffff;
+  background-color: rgb(255, 255, 255);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -28,7 +28,7 @@
 }
 .sidebar-menu-item {
   border-radius: 1rem;
-  margin: 0.5rem 0;
+  margin: 0 1rem;
 }
 .sidebar-list li button {
   display: block;
@@ -37,24 +37,33 @@
   text-align: left;
   border: none;
   background: transparent;
-  color: #000;
+  color: rgb(0, 0, 0);
   font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.4s cubic-bezier(0.4,0,0.2,1), color 0.18s cubic-bezier(0.4,0,0.2,1), box-shadow 0.18s cubic-bezier(0.4,0,0.2,1);
   border-radius: 1rem;
 }
 .sidebar-list li button.active {
-  background-color: #a294f9;
-  color: #fff;
+  background-color: rgb(162, 148, 249);
+  color: rgb(255, 255, 255);
+  box-shadow: 0px 0px 32px -10px rgba(0, 0, 0, 0.5);
 }
 .sidebar-list li button:not(.active):hover,
 .sidebar-list li button:not(.active):focus {
-  background-color: #8f7af1;
+  background-color: rgba(0, 0, 0, 0.1);
 }
 .sidebar-content {
   flex: 1;
   padding: 2rem;
   overflow-y: auto;
-  background-color: #e5d9f2;
+  background-color: rgb(255, 255, 255);
   border-radius: 1rem;
+}
+.sidebar-divider {
+  display: block;
+  height: 2px;
+  background-color: rgba(0, 0, 0, 0.1);
+  width: 70%;
+  border-radius: 20px;
+  margin: 0 auto;
 }

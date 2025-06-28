@@ -31,7 +31,7 @@ export default function VistaDiagnostico({ user, datosUsuario }) {
     obtenerDiagnosticos();
   }, [user, datosUsuario]);
 
-  if (loading) return <p className="diagnostico-loading">Cargando diagnósticos...</p>;
+  if (loading) return <p className="diagnostico-loading"></p>;
   if (msg) return <p className="diagnostico-error">{msg}</p>;
   if (diagnosticos.length === 0) return <p className="diagnostico-empty">No hay diagnósticos registrados aún.</p>;
 
