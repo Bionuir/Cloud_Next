@@ -1,27 +1,20 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
-export default function VistaUsuarios() {
-  const [usuarios, setUsuarios] = useState([]);
-  const [busqueda, setBusqueda] = useState('');
-  const [filtroRol, setFiltroRol] = useState('todos');
+export default function UserList() {
+  const [users, setUsers]       = useState([]);
+  const [page, setPage]         = useState(1);
+  const [limit]                 = useState(10);
+  const [totalPages, setTotal]  = useState(1);
+  const [filter, setFilter]     = useState('todos');
+  const [searchTerm, setSearch] = useState('');
+  const [input, setInput]       = useState('');
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL + '/api/users';
 
-  useEffect(() => {
-    const fetchUsuarios = async () => {
-      try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users`);
-        const data = await res.json();
-        setUsuarios(data);
-        console.log('Usuarios cargados:', data);
-      } catch (error) {
-        console.error('Error al obtener usuarios:', error);
-      }
-    };
-
-    fetchUsuarios();
-  }, []);
-
+  // Actualizar rol del usuario
   const actualizarRol = async (googleId, nuevoRol) => {
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/rol/${googleId}`, {
@@ -29,54 +22,97 @@ export default function VistaUsuarios() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ nuevoRol }),
       });
-
-      const data = await res.json();
-      console.log('Rol actualizado:', data);
-
-      setUsuarios(prev =>
+      await res.json();
+      setUsers(prev =>
         prev.map(user => user.googleId === googleId ? { ...user, rol: nuevoRol } : user)
       );
     } catch (error) {
-      console.error('Error al actualizar rol:', error);
+      // Opcional: manejo de error
     }
   };
 
-  // Filtrar usuarios por búsqueda y rol
-  const usuariosFiltrados = usuarios.filter(user => {
-    // Filtro por rol
-    let rolMatch = true;
-    if (filtroRol === 'admin') rolMatch = user.rol === 1;
-    else if (filtroRol === 'terapeuta') rolMatch = user.rol === 4;
-    else if (filtroRol === 'paciente') rolMatch = user.rol === 6;
+  const fetchUsers = useCallback(async () => {
+    try {
+      const params = new URLSearchParams({
+        page, limit,
+        filter,
+        ...(searchTerm && { search: searchTerm })
+      });
 
-    // Filtro por búsqueda (nombre, apellido o correo)
-    const texto = `${user.nombre} ${user.apellido} ${user.correo}`.toLowerCase();
-    const busquedaMatch = texto.includes(busqueda.toLowerCase());
+      const res = await fetch(`${apiUrl}?${params}`);
+      if (!res.ok) throw new Error('Fetch error');
 
-    return rolMatch && busquedaMatch;
-  });
+      const { data, pages } = await res.json();
+      setUsers(data);
+      setTotal(pages);
+    } catch {
+      setUsers([]);
+    }
+  }, [page, limit, filter, searchTerm]);
+
+  useEffect(() => { fetchUsers(); }, [fetchUsers]);
+
+  const onSearch = () => {
+    setSearch(input.trim());
+    setPage(1);
+  };
+
+  const handleInputKeyDown = (e) => {
+    if (e.key === 'Enter') onSearch();
+  };
+
+  // Traducción del filtro para el backend (opcional, si tu backend lo requiere)
+  // const getBackendFilter = (filtro) => {
+  //   switch (filtro) {
+  //     case 'admin': return 'admins';
+  //     case 'terapeuta': return 'terapeutas';
+  //     case 'paciente': return 'pacientes';
+  //     default: return 'todos';
+  //   }
+  // };
 
   return (
     <div>
-      <h1 className="title">👥 Lista de Usuarios</h1>
+      <h1 className="title">Lista de Usuarios</h1>
       <div className="filtros">
         <input
           type="text"
           placeholder="Buscar por nombre, apellido o correo..."
-          value={busqueda}
-          onChange={e => setBusqueda(e.target.value)}
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={handleInputKeyDown}
           className="inputBusqueda"
         />
+        <button className="buscarBtn" onClick={onSearch}>Buscar</button>
         <select
-          value={filtroRol}
-          onChange={e => setFiltroRol(e.target.value)}
+          value={filter}
+          onChange={e => { setFilter(e.target.value); setPage(1); }}
           className="selectFiltro"
         >
           <option value="todos">Todos</option>
-          <option value="admin">Admins</option>
-          <option value="terapeuta">Terapeutas</option>
-          <option value="paciente">Pacientes</option>
+          <option value="admins">Admins</option>
+          <option value="terapeutas">Terapeutas</option>
+          <option value="pacientes">Pacientes</option>
         </select>
+        <div className="paginacion">
+          <button
+            className="paginacionBtn"
+            onClick={() => setPage(p => Math.max(1, p - 1))}
+            disabled={page === 1}
+            aria-label="Página anterior"
+          >
+            <ArrowBackIosNewIcon />
+          </button>
+          <span className="paginacionNum">{page} / {totalPages}</span>
+          <button
+            className="paginacionBtn"
+            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+            disabled={page === totalPages}
+            aria-label="Página siguiente"
+          >
+            <ArrowForwardIosIcon />
+          </button>
+        </div>
       </div>
       <table className="userTable">
         <thead>
@@ -87,18 +123,18 @@ export default function VistaUsuarios() {
           </tr>
         </thead>
         <tbody>
-          {usuariosFiltrados.map((user) => (
-            <tr key={user._id} className="tableRow">
-              <td className="tableCell">{user.nombre} {user.apellido}</td>
-              <td className="tableCell">{user.correo}</td>
+          {users.map(u => (
+            <tr key={u._id} className="tableRow">
+              <td className="tableCell">{u.nombre} {u.apellido}</td>
+              <td className="tableCell">{u.correo}</td>
               <td className="tableCell">
                 <select
                   className="selectRol"
-                  value={user.rol}
-                  onChange={(e) => actualizarRol(user.googleId, parseInt(e.target.value))}
-                  disabled={user.rol === 1} // Deshabilita si es admin
+                  value={u.rol}
+                  onChange={e => actualizarRol(u.googleId, parseInt(e.target.value))}
+                  disabled={u.rol === 1}
                 >
-                  {user.rol === 1 ? (
+                  {u.rol === 1 ? (
                     <option value={1}>Admin</option>
                   ) : (
                     <>
@@ -122,6 +158,7 @@ export default function VistaUsuarios() {
           display: flex;
           gap: 1rem;
           margin-bottom: 1rem;
+          align-items: center;
         }
         .inputBusqueda {
           flex: 1;
@@ -140,7 +177,6 @@ export default function VistaUsuarios() {
           background-color: #F5EFFF;
           border-collapse: collapse;
           transition: all 0.3s ease;
-          
         }
         .tableCell {
           padding: 1.0rem;
@@ -161,6 +197,42 @@ export default function VistaUsuarios() {
           background-color: #e0e0e0;
           color: #555;
         }
+        .paginacion {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+        .paginacionBtn {
+          background: none;
+          border: none;
+          cursor: pointer;
+          padding: 0.2rem;
+          display: flex;
+          align-items: center;
+        }
+        .paginacionBtn:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+        .paginacionNum {
+          font-weight: bold;
+          font-size: 1.1rem;
+          min-width: 2rem;
+          text-align: center;
+        }
+        .buscarBtn {
+          padding: 0.5rem 1rem;
+          border-radius: 4px;
+          border: 1px solid #7c3aed;
+          background: #7c3aed;
+          color: #fff;
+          font-weight: 500;
+          cursor: pointer;
+          transition: background 0.2s;
+        }
+        .buscarBtn:hover {
+          background: #5b21b6;
+        }
         @media (max-width: 768px) {
           .userTable, .tableCell {
             font-size: 0.9rem;
@@ -168,6 +240,10 @@ export default function VistaUsuarios() {
           .filtros {
             flex-direction: column;
             gap: 0.5rem;
+            align-items: stretch;
+          }
+          .paginacion {
+            justify-content: flex-end;
           }
         }
       `}</style>

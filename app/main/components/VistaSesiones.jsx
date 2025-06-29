@@ -178,14 +178,13 @@ export default function VistaSesiones({ user, datosUsuario }) {
       <style jsx global>{`
         .sesiones-container {
           padding: 1rem;
-          max-width: 800px;
           margin: 0 auto;
         }
         .sesiones-heading {
           font-size: 24px;
           font-weight: bold;
           margin-bottom: 1rem;
-          text-align: center;
+          text-align: left;
         }
         .sesiones-subheading {
           font-size: 18px;

@@ -95,6 +95,10 @@ export default function VistaDiagnostico({ user, datosUsuario }) {
           padding: 1rem;
           text-align: center;
           font-size: 1rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          min-height: 120px;
         }
         .diagnostico-error {
           color: #dc2626;

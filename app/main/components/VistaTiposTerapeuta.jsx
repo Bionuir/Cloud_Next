@@ -94,10 +94,10 @@ export default function VistaTiposTerapeuta() {
         .tipo-container {
           max-width: 96rem;
           margin: 0 auto;
-          padding: 1.5rem;
+          padding: 1rem;
         }
         .tipo-heading {
-          font-size: 2rem;
+          font-size: 24px;
           font-weight: bold;
           margin-bottom: 1.5rem;
           text-align: left;
