@@ -18,6 +18,13 @@ export default function AgendarSesion({ terapeuta, onClose }) {
   const [motivo, setMotivo] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
+  // Obtener la fecha mínima (mañana)
+  const getMinDate = () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return formatDate(tomorrow);
+  };
+
   // construye fecha y selectedDay automáticamente
   const handleFechaChange = (value) => {
     setFecha(value);
@@ -56,11 +63,19 @@ export default function AgendarSesion({ terapeuta, onClose }) {
       base = new Date(y, m - 1, d);
     } else {
       base = new Date();
+      base.setDate(base.getDate() + 1); // Empezar desde mañana
     }
     const monday = getMonday(base);
     const target = new Date(monday);
     target.setDate(monday.getDate() + i);
     return target;
+  };
+
+  // Verificar si una fecha es válida (no es pasada ni actual)
+  const isDateValid = (date) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return date > today;
   };
 
   // 1) IDs
@@ -180,6 +195,7 @@ export default function AgendarSesion({ terapeuta, onClose }) {
                 className="agendar-sesion-input"
                 value={fecha}
                 onChange={e => handleFechaChange(e.target.value)}
+                min={getMinDate()}
               />
             </label>
 
@@ -189,15 +205,18 @@ export default function AgendarSesion({ terapeuta, onClose }) {
               <div className="agendar-sesion-day-container">
                 {daysOfWeekLower.map((dl, i) => {
                   const target = getDateForDay(i);
+                  const isValid = isDateValid(target);
                   return (
                     <button
                       key={dl}
                       onClick={() => {
-                        setSelectedDay(dl);
-                        setFecha(formatDate(target));
+                        if (isValid) {
+                          setSelectedDay(dl);
+                          setFecha(formatDate(target));
+                        }
                       }}
                       className={`agendar-sesion-day-btn ${selectedDay === dl ? 'selected' : ''}`}
-                      disabled={!horario?.[dl]?.some(b => b.activado)}
+                      disabled={!horario?.[dl]?.some(b => b.activado) || !isValid}
                     >
                       <span className="day-text">{daysOfWeek[i]}</span>
                       <span className="day-divider" />
